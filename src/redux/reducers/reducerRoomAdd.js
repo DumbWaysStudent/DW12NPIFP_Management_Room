@@ -7,15 +7,15 @@ const initialState = {
     data: [],
 };
 
-export default function reducerRoom(state = initialState, action) {
+export default function reducerRoomAdd(state = initialState, action) {
     switch (action.type) {
-        case `${types.GET_ROOMS}_PENDING`:
+        case `${types.POST_ROOM}_PENDING`:
             return {
                 ...state,
                 isLoading: true
             };
 
-        case `${types.GET_ROOMS}_FULFILLED`:
+        case `${types.POST_ROOM}_FULFILLED`:
             return {
                 ...state,
                 isLoading: false,
@@ -23,7 +23,7 @@ export default function reducerRoom(state = initialState, action) {
                 data: action.payload.data
             };
 
-        case `${types.GET_ROOMS}_REJECTED`:
+        case `${types.POST_ROOM}_REJECTED`:
             return {
                 ...state,
                 isLoading: false,

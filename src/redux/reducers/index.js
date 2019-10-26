@@ -4,6 +4,7 @@ import { createNavigationReducer } from 'react-navigation-redux-helpers';
 import RootNavigation from './../../navigator/RootNavigation'
 import reducerAuth from './reducerAuth';
 import reducerRoom from './reducerRoom';
+import reducerRoomAdd from './reducerRoomAdd';
 import reducerCustomer from './reducerCustomer';
 import reducerOrder from './reducerOrder';
 
@@ -14,6 +15,7 @@ const appReducer = combineReducers({
     router: reducerRouter,
     auth: reducerAuth,
     rooms: reducerRoom,
+    roomsadd: reducerRoomAdd,
     customers: reducerCustomer,
     orders: reducerOrder,
 

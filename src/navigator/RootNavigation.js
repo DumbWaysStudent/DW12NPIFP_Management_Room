@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
+import MemberNavigation from '../navigator/MemberNavigation'
 import login from '../screen/login'
+import addRoom from '../screen/addRoom'
+
 
 const RootNavigation = createStackNavigator({
     // SplashScreen: {
@@ -23,13 +26,18 @@ const RootNavigation = createStackNavigator({
     //         header: null,
     //     }
     // },
-    // MemberNavigation: {
-    //     screen: MemberNavigation,
-    //     navigationOptions: {
-    //         header: null,
-    //         gesturesEnabled: false,
-    //     }
-    // },
+    MemberNavigation: {
+        screen: MemberNavigation,
+        navigationOptions: {
+            header: null,
+        }
+    },
+    addRoom: {
+        screen: addRoom,
+        navigationOptions: {
+            header: null,
+        }
+    },
 })
 
 

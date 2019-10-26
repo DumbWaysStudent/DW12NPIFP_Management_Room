@@ -15,19 +15,17 @@ export default class SignIn extends Component {
             icon: 'eye',
         };
     }
-    authEmailPassword() {
-        // let reg = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-        const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    authUsernamePassword() {
         const { inputUsername, inputPassword } = this.state
         const { navigation } = this.props
         if (inputUsername != '' && inputPassword != '') {
-            axios.post(`${API_TOON}/api/v1/login`, {
-                email: inputUsername,
+            axios.post(`${API_SERV}/api/v2/login`, {
+                username: inputUsername,
                 password: inputPassword
             })
                 .then(result => {
                     AsyncStorage.setItem('userToken', result.data.token)
-                    navigation.navigate('MainNavigation')
+                    navigation.navigate('MemberNavigation')
                 })
                 .catch((error) => {
                     console.log(error)
@@ -65,7 +63,7 @@ export default class SignIn extends Component {
                         <Input autoCapitalize='none' returnKeyType='go' secureTextEntry={this.state.hiddenPass} placeholder='Password' placeholderTextColor='white' style={styles.txtFormStyle} value={this.state.inputPassword} onChangeText={(inputPassword) => this.setState({ inputPassword })} />
                         <Icon style={styles.iconStyle} active name={this.state.icon} onPress={() => this._changeIcon()} />
                     </Item>
-                    <Button rounded style={styles.buttonLogin} onPress={() => this.authEmailPassword()}>
+                    <Button rounded style={styles.buttonLogin} onPress={() => this.authUsernamePassword()}>
                         <Text style={styles.textButtonSignIn}> SIGN IN </Text>
                     </Button>
                     <Button rounded style={styles.buttonLogin} onPress={() => this.demoAkun()}>
