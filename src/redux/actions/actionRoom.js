@@ -15,3 +15,10 @@ export const handleAddRoom = (data, token) => ({
         headers: { "Authorization": `Bearer ${token}` }
     })
 });
+
+export const handleEditRoom = (id, data, token) => ({
+    type: types.PATCH_ROOM,
+    payload: axios.patch(`${API_SERV}/api/v2/room/${id}`, data, {
+        headers: { "Authorization": `Bearer ${token}` }
+    })
+});

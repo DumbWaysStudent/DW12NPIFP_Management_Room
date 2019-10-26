@@ -5,6 +5,7 @@ import RootNavigation from './../../navigator/RootNavigation'
 import reducerAuth from './reducerAuth';
 import reducerRoom from './reducerRoom';
 import reducerRoomAdd from './reducerRoomAdd';
+import reducerRoomEdit from './reducerRoomEdit';
 import reducerCustomer from './reducerCustomer';
 import reducerOrder from './reducerOrder';
 
@@ -16,6 +17,7 @@ const appReducer = combineReducers({
     auth: reducerAuth,
     rooms: reducerRoom,
     roomsadd: reducerRoomAdd,
+    roomsedit: reducerRoomEdit,
     customers: reducerCustomer,
     orders: reducerOrder,
 

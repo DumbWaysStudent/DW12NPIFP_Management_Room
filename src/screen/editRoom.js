@@ -5,11 +5,12 @@ import { Item, Input, Button } from 'native-base';
 import { connect } from 'react-redux'
 import * as actionRoom from './../redux/actions/actionRoom'
 
-class addRoom extends Component {
+class editRoom extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            roomname: '',
+            id: this.props.navigation.getParam('id'),
+            roomname: this.props.navigation.getParam('roomname'),
             token: ''
         };
     }
@@ -17,12 +18,12 @@ class addRoom extends Component {
         const token = await AsyncStorage.getItem('userToken')
         this.setState({ token })
     }
-    _handleAddRoom() {
-        const { roomname, token } = this.state
+    _handleEditRoom() {
+        const { id, roomname, token } = this.state
         const data = {
             roomname
         }
-        this.props.handleAddRoom(data, token)
+        this.props.handleEditRoom(id, data, token)
         this.props.navigation.navigate('room')
     }
 
@@ -32,7 +33,7 @@ class addRoom extends Component {
                 <Item rounded style={styles.inputStyle}>
                     <Input autoCapitalize='none' returnKeyType='next' placeholder='Room Name' placeholderTextColor='black' style={styles.txtFormStyle} value={this.state.roomname} onChangeText={(roomname) => this.setState({ roomname })} />
                 </Item>
-                <Button rounded style={styles.buttonLogin} onPress={() => this._handleAddRoom()}>
+                <Button rounded style={styles.buttonLogin} onPress={() => this._handleEditRoom()}>
                     <Text style={styles.textButtonSignIn}> Submit </Text>
                 </Button>
                 <Button rounded style={styles.buttonLogin} onPress={() => this.props.navigation.goBack()}>
@@ -56,11 +57,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        handleAddRoom: (data, token) => dispatch(actionRoom.handleAddRoom(data, token)),
+        handleEditRoom: (id, data, token) => dispatch(actionRoom.handleEditRoom(id, data, token)),
     }
 }
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(addRoom);
+)(editRoom);

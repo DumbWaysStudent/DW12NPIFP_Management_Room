@@ -32,7 +32,10 @@ class room extends Component {
                     showsHorizontalScrollIndicator={false}
                     renderItem={({ item }) =>
                         <Card style={styles.cardStyle}>
-                            <CardItem button style={styles.cardItem}>
+                            <CardItem button onPress={() => this.props.navigation.navigate('editRoom', {
+                                id: item.id,
+                                roomname: item.roomname
+                            })} style={styles.cardItem}>
                                 <Text style={styles.textStyle}>{item.roomname}</Text>
                             </CardItem>
                         </Card>
