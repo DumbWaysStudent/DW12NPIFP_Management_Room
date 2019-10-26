@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 const AuthController = require('./controllers/authController')
 const RoomController = require('./controllers/roomController')
 const CustomerController = require('./controllers/customerController')
-const orderController = require('./controllers/orderController')
+const OrderController = require('./controllers/orderController')
 
 //middleware
 const { authenticated } = require('./middleware')
@@ -34,6 +34,9 @@ app.group('/api/v2', (router) => {
     //API login & register
     router.post('/login', AuthController.login) //for Log In
     router.post('/register', AuthController.register) //for Register
+
+    //API User
+    router.get('/user/:id', authenticated, AuthController.getUser)
 
     //API Room
     router.get('/rooms', authenticated, RoomController.index) //untuk mendapatkan semua room
@@ -46,9 +49,11 @@ app.group('/api/v2', (router) => {
     router.patch('/customer/:id', authenticated, CustomerController.update) //untuk merubah semua customer
 
     //API Order
-    // router.get('/checkin', authenticated, orderController.index) //untuk mendapatkan semua order
-    // router.post('/orders', authenticated, orderController.store) //untuk membuat order baru
-    // router.patch('/order/:id', authenticated, orderController.update) //untuk checkout order
+    // router.get('/checkin', authenticated, OrderController.index) //untuk mendapatkan semua order
+    // router.post('/orders', authenticated, OrderController.store) //untuk membuat order baru
+    // router.patch('/order/:id', authenticated, OrderController.update) //untuk checkout order
+
+
 })
 
 app.listen(port, () => console.log(`Listening On Port ${port}!`))

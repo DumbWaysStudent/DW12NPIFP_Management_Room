@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
         height: 100,
         flexDirection: 'column',
     },
-    cartItem: {
+    cardItem: {
         marginTop: 5,
         backgroundColor: 'tomato'
     },

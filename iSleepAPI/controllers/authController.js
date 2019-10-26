@@ -36,3 +36,11 @@ exports.register = async (req, res) => {
     }).then(result => res.send(result))
         .catch(result => res.send(result))
 }
+
+exports.getUser = (req, res) => {
+    const idUser = req.params.id
+    User.findOne({ where: { id: idUser } })
+        .then(result => res.send(result))
+        .catch(err => res.send(err))
+}
+

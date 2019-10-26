@@ -3,6 +3,7 @@ import { createNavigationReducer } from 'react-navigation-redux-helpers';
 
 import RootNavigation from './../../navigator/RootNavigation'
 import reducerAuth from './reducerAuth';
+import reducerGetUser from './reducerGetUser';
 import reducerRoom from './reducerRoom';
 import reducerRoomAdd from './reducerRoomAdd';
 import reducerRoomEdit from './reducerRoomEdit';
@@ -15,6 +16,7 @@ const reducerRouter = createNavigationReducer(RootNavigation);
 const appReducer = combineReducers({
     router: reducerRouter,
     auth: reducerAuth,
+    getuser: reducerGetUser,
     rooms: reducerRoom,
     roomsadd: reducerRoomAdd,
     roomsedit: reducerRoomEdit,
