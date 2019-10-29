@@ -1,5 +1,7 @@
 const models = require('../models')
 const Rooms = models.rooms
+const Orders = models.orders
+const Customers = models.customers
 
 exports.index = (req, res) => {
     Rooms.findAll({})
@@ -33,3 +35,22 @@ exports.update = (req, res) => {
         .then(result => res.send(result))
         .catch(err => res.send(err))
 }
+
+exports.checkin = (req, res) => {
+    Rooms.findAll({
+        include: [
+            {
+                model: Orders,
+                as: 'Orders',
+                // where: { is_done: false },
+                include: [
+                    {
+                        model: Customers,
+                        as: 'Customer'
+                    }
+                ],
+            },
+        ],
+
+    }).then(orders => res.send(orders));
+};

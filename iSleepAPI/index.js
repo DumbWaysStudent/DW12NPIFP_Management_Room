@@ -35,8 +35,6 @@ app.group('/api/v2', (router) => {
     router.post('/login', AuthController.login) //for Log In
     router.post('/register', AuthController.register) //for Register
 
-    //API User
-    router.get('/user/:id', authenticated, AuthController.getUser)
 
     //API Room
     router.get('/rooms', authenticated, RoomController.index) //untuk mendapatkan semua room
@@ -49,7 +47,7 @@ app.group('/api/v2', (router) => {
     router.patch('/customer/:id', authenticated, CustomerController.update) //untuk merubah semua customer
 
     //API Order
-    // router.get('/checkin', authenticated, OrderController.index) //untuk mendapatkan semua order
+    router.get('/checkin', authenticated, RoomController.checkin) //untuk mendapatkan semua order
     // router.post('/orders', authenticated, OrderController.store) //untuk membuat order baru
     // router.patch('/order/:id', authenticated, OrderController.update) //untuk checkout order
 

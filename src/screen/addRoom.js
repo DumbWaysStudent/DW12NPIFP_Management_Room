@@ -57,6 +57,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         handleAddRoom: (data, token) => dispatch(actionRoom.handleAddRoom(data, token)),
+        handleGetRoom: (token) => dispatch(actionRoom.handleGetRoom(token))
     }
 }
 

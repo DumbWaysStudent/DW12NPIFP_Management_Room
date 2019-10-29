@@ -12,7 +12,8 @@ exports.login = (req, res) => {
                 const token = jwt.sign({ userId: user.id }, 'my-secret-key')
                 res.send({
                     message: "success",
-                    token
+                    token,
+                    username
                 })
             } else {
                 res.send({

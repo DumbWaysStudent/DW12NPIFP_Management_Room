@@ -9,14 +9,14 @@ module.exports = (sequelize, DataTypes) => {
     order_end_time: DataTypes.DATE
   }, {});
   orders.associate = function (models) {
-    orders.hasMany(models.customers, {
-      foreignKey: 'id',
-      sourceKey: 'idCustomer'
+    orders.belongsTo(models.customers, {
+      foreignKey: 'idCustomer',
+      as: 'Customer'
     });
-    orders.hasMany(models.rooms, {
-      foreignKey: 'id',
-      sourceKey: 'idRoom'
-    });
+    // orders.hasMany(models.rooms, {
+    //   foreignKey: 'id',
+    //   as: 'Room',
+    // });
   };
   return orders;
 };

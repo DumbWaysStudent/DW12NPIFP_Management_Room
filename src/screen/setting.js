@@ -1,75 +1,95 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, StyleSheet, AsyncStorage } from 'react-native';
-import { Card, CardItem, Header, Body, Title } from "native-base";
-import jwt_decode from 'jwt-decode';
+import { View, Text, FlatList, AsyncStorage, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { Header, Body, Title, Button, Image, Icon, Fab } from "native-base";
 
-
-import { connect } from 'react-redux'
-import * as actionAuth from './../redux/actions/actionAuth'
-
-class setting extends Component {
+export default class setting extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isOpen: false,
+            isDisabled: false,
+            swipeToClose: true,
+            username: ''
         };
     }
-    async componentDidMount() {
-        const token = await AsyncStorage.getItem('userToken')
-        const idUser = jwt_decode(token)
-        const id = idUser.userId
 
-        await this.props.handleGetUser(id, token)
+
+    async componentDidMount() {
+        const username = await AsyncStorage.getItem('adminUsername')
+
+        this.setState({ username })
+    }
+
+    _handleLogOut() {
+        AsyncStorage.clear()
+        this.props.navigation.navigate('login')
     }
 
     render() {
-        const dataUser = this.props.dataUser.data
-        console.log(dataUser)
         return (
-            <View>
-                <Header style={{ backgroundColor: '#01CB75', marginBottom: 20 }}>
+            <View style={{ flex: 1 }}>
+                <Header style={{ backgroundColor: '#01CB75', marginBottom: 15 }}>
                     <Body style={{ paddingLeft: 15 }}>
-                        <Title style={{ color: 'white', alignSelf: 'center' }}>Setting</Title>
+                        <Title style={styles.titleStyle}>Customer</Title>
                     </Body>
                 </Header>
-                <Card style={styles.cardStyle}>
-                    <CardItem style={styles.cardItem}>
-                        <Text style={styles.textStyle}>{dataUser.username}</Text>
-                    </CardItem>
-                </Card>
-            </View >
+
+                <View style={{ flexDirection: 'row', flex: 1, margin: 3, alignContent: 'center', alignSelf: 'center', }}>
+                    <TouchableOpacity style={styles.cardItem}>
+                        <View style={styles.imgStyle}>
+                            <Icon name="contact" style={{ color: '#2f3640', fontSize: 75 }} />
+                        </View>
+                        <View style={styles.cardItemDetail}>
+                            <Text style={styles.fontDetail}>Nama</Text>
+                        </View>
+                        <View style={styles.cardItemDetail}>
+                            <Text style={styles.fontDetailContent}>: {this.state.username}</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ justifyContent: 'flex-end', alignContent: 'flex-end' }}>
+                    <Button warning onPress={() => this._handleLogOut()} >
+                        <Text>Log Out</Text>
+                    </Button>
+                </View>
+            </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    cardStyle: {
-        flex: 1,
-        height: 100,
-        flexDirection: 'column',
+    titleStyle: {
+        color: 'white',
+        alignSelf: 'center',
+        fontWeight: 'bold'
+    },
+    scrollViewStle: {
+        alignContent: 'center',
+        alignSelf: 'center',
+
     },
     cardItem: {
-        marginTop: 5,
+        borderWidth: 2,
+        borderRadius: 20,
+        width: 360,
+        height: 100,
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+        backgroundColor: '#fdcb6e'
     },
-    textStyle: {
-        fontSize: 20,
-        alignSelf: 'center',
-        justifyContent: 'center'
-    }
-})
+    cardItemDetail: {
+        marginLeft: 10,
+    },
+    imgStyle: {
 
-const mapStateToProps = state => {
-    return {
-        dataUser: state.getuser
+    },
+    fontDetail: {
+        fontSize: 15
+    },
+    fontDetailContent: {
+        fontSize: 15,
+        fontWeight: 'bold'
     }
-}
 
-const mapDispatchToProps = dispatch => {
-    return {
-        handleGetUser: (id, token) => dispatch(actionAuth.handleGetUser(id, token)),
-    }
-}
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(setting);
+});

@@ -15,7 +15,7 @@ const BottonNavigator = createBottomTabNavigator({
         screen: checkin,
         navigationOptions: {
             tabBarLabel: 'Check In',
-            tabBarIcon: ({ tintColor }) => (<Icon name="md-apps" color={tintColor} size={24} />),
+            tabBarIcon: ({ tintColor }) => (<Icon name="md-checkmark-circle" color={tintColor} size={24} />),
 
         }
     },
@@ -23,21 +23,21 @@ const BottonNavigator = createBottomTabNavigator({
         screen: room,
         navigationOptions: {
             tabBarLabel: 'Room',
-            tabBarIcon: ({ tintColor }) => (<Icon name="md-star" color={tintColor} size={24} />)
+            tabBarIcon: ({ tintColor }) => (<Icon name="md-bed" color={tintColor} size={24} />)
         }
     },
     customer: {
         screen: customer,
         navigationOptions: {
             tabBarLabel: 'Customer',
-            tabBarIcon: ({ tintColor }) => (<Icon name="md-person" color={tintColor} size={24} />)
+            tabBarIcon: ({ tintColor }) => (<Icon name="md-information-circle" color={tintColor} size={24} />)
         }
     },
     setting: {
         screen: setting,
         navigationOptions: {
             tabBarLabel: 'Setting',
-            tabBarIcon: ({ tintColor }) => (<Icon name="md-person" color={tintColor} size={24} />)
+            tabBarIcon: ({ tintColor }) => (<Icon name="md-settings" color={tintColor} size={24} />)
         }
     }
 }, {

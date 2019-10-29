@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, StyleSheet, AsyncStorage } from 'react-native';
-import { Card, CardItem, Header, Body, Title } from "native-base";
+import { View, Text, FlatList, StyleSheet, AsyncStorage, TouchableOpacity } from 'react-native';
+import { Card, CardItem, Header, Body, Title, Button } from "native-base";
 
 import { connect } from 'react-redux'
 import * as actionRoom from './../redux/actions/actionRoom'
@@ -22,31 +22,32 @@ class room extends Component {
         const dataRoom = this.props.dataRoom.data
         return (
             <View style={styles.pageStyle}>
-                <Header style={{ backgroundColor: '#01CB75', marginBottom: 20 }}>
+                <Header style={{ backgroundColor: '#01CB75', marginBottom: 15 }}>
                     <Body style={{ paddingLeft: 15 }}>
-                        <Title style={{ color: 'white', alignSelf: 'center' }}>Room</Title>
+                        <Title style={styles.titleStyle}>Room</Title>
                     </Body>
                 </Header>
                 <FlatList
                     data={dataRoom}
+                    numColumns={2}
                     showsHorizontalScrollIndicator={false}
                     renderItem={({ item }) =>
-                        <Card style={styles.cardStyle}>
-                            <CardItem button onPress={() => this.props.navigation.navigate('editRoom', {
+                        <View style={{ flexDirection: 'row', flex: 1, margin: 3 }}>
+                            <TouchableOpacity style={styles.itemStyle} onPress={() => this.props.navigation.navigate('editRoom', {
                                 id: item.id,
                                 roomname: item.roomname
-                            })} style={styles.cardItem}>
-                                <Text style={styles.textStyle}>{item.roomname}</Text>
-                            </CardItem>
-                        </Card>
+                            })}>
+                                <Text>{item.roomname}</Text>
+                            </TouchableOpacity>
+                        </View>
                     }
                     keyExtractor={(item, index) => index.toString()
                     } />
-                <Card>
-                    <CardItem button onPress={() => this.props.navigation.navigate('addRoom')} style={styles.cardItem}>
+                <View style={styles.addButton}>
+                    <Button rounded transparent onPress={() => this.props.navigation.navigate('addRoom')} style={styles.cardItem}>
                         <Text>Add</Text>
-                    </CardItem>
-                </Card>
+                    </Button>
+                </View>
             </View>
         );
     }
@@ -57,6 +58,11 @@ const styles = StyleSheet.create({
         flex: 1,
 
     },
+    titleStyle: {
+        color: 'white',
+        alignSelf: 'center',
+        fontWeight: 'bold'
+    },
     cardStyle: {
         flex: 1,
         height: 100,
@@ -64,7 +70,22 @@ const styles = StyleSheet.create({
     },
     cardItem: {
         marginTop: 5,
-        backgroundColor: 'tomato'
+    },
+    itemStyle: {
+        height: 60,
+        width: 190,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fdcb6e'
+    },
+    addButton: {
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'green',
+        borderRadius: 20,
+        width: 100,
+        marginBottom: 20
     },
     textStyle: {
         fontSize: 20,

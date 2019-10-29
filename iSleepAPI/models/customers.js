@@ -7,10 +7,10 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.STRING
   }, {});
   customers.associate = function (models) {
-    customers.belongsTo(models.orders, {
-      foreignKey: 'id',
-      targetKey: 'idCustomer'
-    })
+    // customers.belongsTo(models.orders, {
+    //   foreignKey: 'id',
+    //   as: 'Customer'
+    // })
   };
   return customers;
 };

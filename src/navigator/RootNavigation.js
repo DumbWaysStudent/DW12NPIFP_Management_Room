@@ -6,6 +6,8 @@ import MemberNavigation from '../navigator/MemberNavigation'
 import login from '../screen/login'
 import addRoom from '../screen/addRoom'
 import editRoom from '../screen/editRoom'
+import addCustomer from '../screen/addCustomer'
+import editCustomer from '../screen/editCustomer'
 
 
 const RootNavigation = createStackNavigator({
@@ -41,6 +43,18 @@ const RootNavigation = createStackNavigator({
     },
     editRoom: {
         screen: editRoom,
+        navigationOptions: {
+            header: null,
+        }
+    },
+    addCustomer: {
+        screen: addCustomer,
+        navigationOptions: {
+            header: null,
+        }
+    },
+    editCustomer: {
+        screen: editCustomer,
         navigationOptions: {
             header: null,
         }

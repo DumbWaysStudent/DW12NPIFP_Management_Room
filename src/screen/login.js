@@ -24,8 +24,14 @@ export default class SignIn extends Component {
                 password: inputPassword
             })
                 .then(result => {
-                    AsyncStorage.setItem('userToken', result.data.token)
-                    navigation.navigate('MemberNavigation')
+                    // console.log(result.data.error)
+                    if (result.data.error != true) {
+                        AsyncStorage.setItem('userToken', result.data.token)
+                        AsyncStorage.setItem('adminUsername', result.data.username)
+                        navigation.navigate('MemberNavigation')
+                    } else {
+                        alert(result.data.message)
+                    }
                 })
                 .catch((error) => {
                     console.log(error)
