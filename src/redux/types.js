@@ -11,3 +11,5 @@ export const POST_CUSTOMER = 'POST_CUSTOMER'
 export const PATCH_CUSTOMER = 'PATCH_CUSTOMER'
 
 export const GET_CHECKIN = 'GET_CHECKIN'
+export const ADD_CHECKIN = 'ADD_CHECKIN'
+export const ADD_CHECKOUT = 'ADD_CHECKOUT'

@@ -51,6 +51,9 @@ exports.checkin = (req, res) => {
                 ],
             },
         ],
+        order: [
+            ['id', 'ASC']
+        ]
 
     }).then(orders => res.send(orders));
 };

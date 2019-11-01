@@ -29,6 +29,46 @@ export default function reducerOrder(state = initialState, action) {
                 isLoading: false,
                 isError: true
             };
+        case `${types.ADD_CHECKIN}_PENDING`:
+            return {
+                ...state,
+                isLoading: true
+            };
+
+        case `${types.ADD_CHECKIN}_FULFILLED`:
+            return {
+                ...state,
+                isLoading: false,
+                isSuccess: true,
+                data: action.payload.data
+            };
+
+        case `${types.ADD_CHECKIN}_REJECTED`:
+            return {
+                ...state,
+                isLoading: false,
+                isError: true
+            };
+        case `${types.ADD_CHECKOUT}_PENDING`:
+            return {
+                ...state,
+                isLoading: true
+            };
+
+        case `${types.ADD_CHECKOUT}_FULFILLED`:
+            return {
+                ...state,
+                isLoading: false,
+                isSuccess: true,
+                data: action.payload.data
+            };
+
+        case `${types.ADD_CHECKOUT}_REJECTED`:
+            return {
+                ...state,
+                isLoading: false,
+                isError: true
+            };
         default:
             return state;
     }

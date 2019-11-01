@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { View, Text, FlatList, AsyncStorage, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { Header, Body, Title, Button, Image, Icon, Fab } from "native-base";
 
+import HeaderComponent from '../assets/component/HeaderComponent'
+
 import { connect } from 'react-redux'
 import * as actionCustomer from './../redux/actions/actionCustomer'
 
@@ -26,11 +28,7 @@ class customer extends Component {
         console.log(dataCustomer)
         return (
             <View style={{ flex: 1 }}>
-                <Header style={{ backgroundColor: '#01CB75', marginBottom: 15 }}>
-                    <Body style={{ paddingLeft: 15 }}>
-                        <Title style={styles.titleStyle}>Customer</Title>
-                    </Body>
-                </Header>
+                <HeaderComponent titlename='Customer' />
                 <ScrollView style={styles.scrollViewStle}>
                     <FlatList
                         data={dataCustomer}
@@ -74,7 +72,7 @@ class customer extends Component {
                         <Icon name="add" />
                     </Fab>
                 </View>
-            </View>
+            </View >
         );
     }
 }

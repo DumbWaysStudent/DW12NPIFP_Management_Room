@@ -74,6 +74,14 @@
 		<string>rubicon-icon-font.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
+		<string>Century Gothic Bold Italic.TTF</string>
+		<string>Century Gothic Bold.TTF</string>
+		<string>Century Gothic Italic.TTF</string>
+		<string>Century Gothic.TTF</string>
+		<string>CenturyGothic-Bold.TTF</string>
+		<string>CenturyGothic-BoldItalic.TTF</string>
+		<string>CenturyGothic-Italic.TTF</string>
+		<string>CenturyGothic.TTF</string>
 	</array>
 </dict>
 </plist>

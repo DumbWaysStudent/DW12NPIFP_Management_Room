@@ -10,13 +10,13 @@ module.exports = (sequelize, DataTypes) => {
     // })
 
     rooms.hasMany(models.orders, {
-      foreignKey: 'id',
+      foreignKey: 'idRoom',
       as: 'Orders'
     })
-    rooms.hasMany(models.customers, {
-      foreignKey: 'id',
-      as: 'Customer'
-    })
+    // rooms.hasMany(models.customers, {
+    //   foreignKey: 'idCustomer',
+    //   as: 'Customer'
+    // })
   };
   return rooms;
 };

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, StatusBar, Image, AsyncStorage } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, Image, AsyncStorage, ImageBackground, Dimensions } from 'react-native';
 import { Item, Input, Button, Icon } from 'native-base';
 
 import { API_SERV } from '../assets/server'
@@ -56,40 +56,54 @@ export default class SignIn extends Component {
 
     render() {
         return (
-            <View style={styles.signInBg}>
-                <StatusBar backgroundColor="#01CB75" barStyle="light-content" />
-                <View style={styles.bgImgView} >
-                    <Text style={styles.loginText}>Login With Your Account </Text>
+            <ImageBackground source={require('../assets/img/imgBackground.jpg')} style={styles.ImgBackground}>
+                <View style={styles.signInBg}>
+                    <StatusBar backgroundColor="#75AF34" barStyle="light-content" />
+                    <View style={styles.bgImgView} >
+                        <Image style={styles.LogoImg} source={require('../assets/img/Logo2.png')}></Image>
+                    </View>
+                    <View style={styles.loginTextView}>
+                        <Item rounded style={styles.inputStyle}>
+                            <Input autoCapitalize='none' returnKeyType='next' placeholder='Username' placeholderTextColor='white' style={styles.txtFormStyle} value={this.state.inputUsername} onChangeText={(inputUsername) => this.setState({ inputUsername })} />
+                        </Item>
+                        <Item rounded style={styles.inputStyle}>
+                            <Input autoCapitalize='none' returnKeyType='go' secureTextEntry={this.state.hiddenPass} placeholder='Password' placeholderTextColor='white' style={styles.txtFormStyle} value={this.state.inputPassword} onChangeText={(inputPassword) => this.setState({ inputPassword })} />
+                            <Icon style={styles.iconStyle} active name={this.state.icon} onPress={() => this._changeIcon()} />
+                        </Item>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Button rounded style={styles.buttonLogin} onPress={() => this.authUsernamePassword()}>
+                                <Text style={styles.textButtonSignIn}> SIGN IN </Text>
+                            </Button>
+                            <Button rounded style={styles.buttonLogin} onPress={() => this.props.navigation.navigate('signup')}>
+                                <Text style={styles.textButtonSignIn}> REGISTER </Text>
+                            </Button>
+                        </View>
+                        <Button rounded style={styles.buttonDemo} onPress={() => this.demoAkun()}>
+                            <Text style={styles.textButtonSignIn}> DEMO </Text>
+                        </Button>
+                    </View>
                 </View>
-                <View style={styles.loginTextView}>
-                    <Item rounded style={styles.inputStyle}>
-                        <Input autoCapitalize='none' returnKeyType='next' placeholder='Username' placeholderTextColor='white' style={styles.txtFormStyle} value={this.state.inputUsername} onChangeText={(inputUsername) => this.setState({ inputUsername })} />
-                    </Item>
-                    <Item rounded style={styles.inputStyle}>
-                        <Input autoCapitalize='none' returnKeyType='go' secureTextEntry={this.state.hiddenPass} placeholder='Password' placeholderTextColor='white' style={styles.txtFormStyle} value={this.state.inputPassword} onChangeText={(inputPassword) => this.setState({ inputPassword })} />
-                        <Icon style={styles.iconStyle} active name={this.state.icon} onPress={() => this._changeIcon()} />
-                    </Item>
-                    <Button rounded style={styles.buttonLogin} onPress={() => this.authUsernamePassword()}>
-                        <Text style={styles.textButtonSignIn}> SIGN IN </Text>
-                    </Button>
-                    <Button rounded style={styles.buttonLogin} onPress={() => this.demoAkun()}>
-                        <Text style={styles.textButtonSignIn}> DEMO </Text>
-                    </Button>
-                    <Text onPress={() => this.props.navigation.navigate('signup')} style={{ color: 'white' }}>If you dont have account please Klik Me</Text>
-                </View>
-
-            </View>
+            </ImageBackground>
         );
     }
 }
 
 
 const styles = StyleSheet.create({
+    ImgBackground: {
+        width: Dimensions.get('window').width,
+        height: '100%',
+    },
     signInBg: {
-        backgroundColor: '#01CB75',
+        backgroundColor: 'rgba(118,176,53,0.5)',
         flex: 1,
         justifyContent: 'center',
         alignContent: 'center'
+    },
+    LogoImg: {
+        width: 250,
+        height: 300,
+        resizeMode: 'contain'
     },
     bgImgView: {
         flex: 2,
@@ -115,7 +129,8 @@ const styles = StyleSheet.create({
     },
     inputStyle: {
         marginVertical: 5,
-        paddingHorizontal: 10
+        paddingHorizontal: 10,
+        backgroundColor: 'rgba(118,176,53,0.8)',
     },
     txtFormStyle: {
         color: 'white',
@@ -124,17 +139,28 @@ const styles = StyleSheet.create({
         color: 'white'
     },
     buttonLogin: {
-        width: 330,
+        width: Dimensions.get('window').width * 0.45,
         justifyContent: 'center',
         marginVertical: 10,
         backgroundColor: 'white',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginHorizontal: 5
+
+    },
+    buttonDemo: {
+        width: Dimensions.get('window').width * 0.8,
+        justifyContent: 'center',
+        marginVertical: 10,
+        backgroundColor: 'white',
+        alignItems: 'center',
+        marginHorizontal: 20
+
     },
     textButtonSignIn: {
-        color: '#01CB75',
+        color: '#75AF34',
         fontSize: 15,
-        fontFamily: 'GOTHIC',
+        fontFamily: 'CenturyGothic',
         width: 300,
-        textAlign: 'center'
+        textAlign: 'center',
     }
 });

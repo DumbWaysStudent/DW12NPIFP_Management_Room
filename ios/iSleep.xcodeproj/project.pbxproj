@@ -34,6 +34,14 @@
 		83A53A3996DB49569A8B981D /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 90E1AA442B8142B094135062 /* rubicon-icon-font.ttf */; };
 		9606F714FFE7428F9F7FE16A /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A21F44255DDA416FBEB0CFA7 /* SimpleLineIcons.ttf */; };
 		6EC40C40877C47AAB6427C63 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E1291718681547208A540A8D /* Zocial.ttf */; };
+		6D61CB09DD9642ABB891804B /* Century Gothic Bold Italic.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 5FA7D965B7994B0FA80C87A3 /* Century Gothic Bold Italic.TTF */; };
+		696BEE4F7AE34B57898DB943 /* Century Gothic Bold.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 2AB7661C86A04C20BCD82787 /* Century Gothic Bold.TTF */; };
+		6195B5D13791423AB8A7D752 /* Century Gothic Italic.TTF in Resources */ = {isa = PBXBuildFile; fileRef = CB6F81EBC08446A797E25398 /* Century Gothic Italic.TTF */; };
+		0A8BCFE7D7864A4DAAC05F86 /* Century Gothic.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 51888DE588D94225841E1EA4 /* Century Gothic.TTF */; };
+		5BB81AF8DB134AFCB04D62D5 /* CenturyGothic-Bold.TTF in Resources */ = {isa = PBXBuildFile; fileRef = B5DE58902A95404581934530 /* CenturyGothic-Bold.TTF */; };
+		D9F3622529A349DDB3F79E8C /* CenturyGothic-BoldItalic.TTF in Resources */ = {isa = PBXBuildFile; fileRef = AC63D6117A9D4A3BB08A9E36 /* CenturyGothic-BoldItalic.TTF */; };
+		139583B98DDE46AE931F00FF /* CenturyGothic-Italic.TTF in Resources */ = {isa = PBXBuildFile; fileRef = EC6E4DFF26924C1DBD1971B8 /* CenturyGothic-Italic.TTF */; };
+		EF33FC4474B9446A850E019E /* CenturyGothic.TTF in Resources */ = {isa = PBXBuildFile; fileRef = B24B73F809FF418BAE5C3295 /* CenturyGothic.TTF */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +96,14 @@
 		90E1AA442B8142B094135062 /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		A21F44255DDA416FBEB0CFA7 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; name = "SimpleLineIcons.ttf"; path = "../node_modules/native-base/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		E1291718681547208A540A8D /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5FA7D965B7994B0FA80C87A3 /* Century Gothic Bold Italic.TTF */ = {isa = PBXFileReference; name = "Century Gothic Bold Italic.TTF"; path = "../src/assets/fonts/Century Gothic Bold Italic.TTF"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2AB7661C86A04C20BCD82787 /* Century Gothic Bold.TTF */ = {isa = PBXFileReference; name = "Century Gothic Bold.TTF"; path = "../src/assets/fonts/Century Gothic Bold.TTF"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		CB6F81EBC08446A797E25398 /* Century Gothic Italic.TTF */ = {isa = PBXFileReference; name = "Century Gothic Italic.TTF"; path = "../src/assets/fonts/Century Gothic Italic.TTF"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		51888DE588D94225841E1EA4 /* Century Gothic.TTF */ = {isa = PBXFileReference; name = "Century Gothic.TTF"; path = "../src/assets/fonts/Century Gothic.TTF"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B5DE58902A95404581934530 /* CenturyGothic-Bold.TTF */ = {isa = PBXFileReference; name = "CenturyGothic-Bold.TTF"; path = "../src/assets/fonts/CenturyGothic-Bold.TTF"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		AC63D6117A9D4A3BB08A9E36 /* CenturyGothic-BoldItalic.TTF */ = {isa = PBXFileReference; name = "CenturyGothic-BoldItalic.TTF"; path = "../src/assets/fonts/CenturyGothic-BoldItalic.TTF"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EC6E4DFF26924C1DBD1971B8 /* CenturyGothic-Italic.TTF */ = {isa = PBXFileReference; name = "CenturyGothic-Italic.TTF"; path = "../src/assets/fonts/CenturyGothic-Italic.TTF"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B24B73F809FF418BAE5C3295 /* CenturyGothic.TTF */ = {isa = PBXFileReference; name = "CenturyGothic.TTF"; path = "../src/assets/fonts/CenturyGothic.TTF"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -217,6 +233,14 @@
 				90E1AA442B8142B094135062 /* rubicon-icon-font.ttf */,
 				A21F44255DDA416FBEB0CFA7 /* SimpleLineIcons.ttf */,
 				E1291718681547208A540A8D /* Zocial.ttf */,
+				5FA7D965B7994B0FA80C87A3 /* Century Gothic Bold Italic.TTF */,
+				2AB7661C86A04C20BCD82787 /* Century Gothic Bold.TTF */,
+				CB6F81EBC08446A797E25398 /* Century Gothic Italic.TTF */,
+				51888DE588D94225841E1EA4 /* Century Gothic.TTF */,
+				B5DE58902A95404581934530 /* CenturyGothic-Bold.TTF */,
+				AC63D6117A9D4A3BB08A9E36 /* CenturyGothic-BoldItalic.TTF */,
+				EC6E4DFF26924C1DBD1971B8 /* CenturyGothic-Italic.TTF */,
+				B24B73F809FF418BAE5C3295 /* CenturyGothic.TTF */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -377,6 +401,14 @@
 				83A53A3996DB49569A8B981D /* rubicon-icon-font.ttf in Resources */,
 				9606F714FFE7428F9F7FE16A /* SimpleLineIcons.ttf in Resources */,
 				6EC40C40877C47AAB6427C63 /* Zocial.ttf in Resources */,
+				6D61CB09DD9642ABB891804B /* Century Gothic Bold Italic.TTF in Resources */,
+				696BEE4F7AE34B57898DB943 /* Century Gothic Bold.TTF in Resources */,
+				6195B5D13791423AB8A7D752 /* Century Gothic Italic.TTF in Resources */,
+				0A8BCFE7D7864A4DAAC05F86 /* Century Gothic.TTF in Resources */,
+				5BB81AF8DB134AFCB04D62D5 /* CenturyGothic-Bold.TTF in Resources */,
+				D9F3622529A349DDB3F79E8C /* CenturyGothic-BoldItalic.TTF in Resources */,
+				139583B98DDE46AE931F00FF /* CenturyGothic-Italic.TTF in Resources */,
+				EF33FC4474B9446A850E019E /* CenturyGothic.TTF in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

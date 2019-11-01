@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { View, Text, FlatList, AsyncStorage, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { Header, Body, Title, Button, Image, Icon, Fab } from "native-base";
 
+import HeaderComponent from '../assets/component/HeaderComponent'
+
 export default class setting extends Component {
     constructor(props) {
         super(props);
@@ -28,12 +30,7 @@ export default class setting extends Component {
     render() {
         return (
             <View style={{ flex: 1 }}>
-                <Header style={{ backgroundColor: '#01CB75', marginBottom: 15 }}>
-                    <Body style={{ paddingLeft: 15 }}>
-                        <Title style={styles.titleStyle}>Customer</Title>
-                    </Body>
-                </Header>
-
+                <HeaderComponent titlename='Setting' />
                 <View style={{ flexDirection: 'row', flex: 1, margin: 3, alignContent: 'center', alignSelf: 'center', }}>
                     <TouchableOpacity style={styles.cardItem}>
                         <View style={styles.imgStyle}>
@@ -58,11 +55,6 @@ export default class setting extends Component {
 }
 
 const styles = StyleSheet.create({
-    titleStyle: {
-        color: 'white',
-        alignSelf: 'center',
-        fontWeight: 'bold'
-    },
     scrollViewStle: {
         alignContent: 'center',
         alignSelf: 'center',

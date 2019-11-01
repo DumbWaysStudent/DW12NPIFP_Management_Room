@@ -48,8 +48,8 @@ app.group('/api/v2', (router) => {
 
     //API Order
     router.get('/checkin', authenticated, RoomController.checkin) //untuk mendapatkan semua order
-    // router.post('/orders', authenticated, OrderController.store) //untuk membuat order baru
-    // router.patch('/order/:id', authenticated, OrderController.update) //untuk checkout order
+    router.post('/orders', authenticated, OrderController.store) //untuk membuat order baru
+    router.delete('/order', authenticated, OrderController.update) //untuk checkout order
 
 
 })
