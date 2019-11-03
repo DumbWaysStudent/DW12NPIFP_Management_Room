@@ -24,7 +24,8 @@ exports.store = (req, res) => {
         is_done: false,
         is_booked: true,
         duration: req.body.duration,
-        order_end_time: new Date()
+        order_end_time: req.body.order_end_time,
+        // order_end_time: new Date()
     })
         .then(result => res.send(result))
         .catch(error => res.send(error))

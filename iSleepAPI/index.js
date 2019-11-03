@@ -40,6 +40,7 @@ app.group('/api/v2', (router) => {
     router.get('/rooms', authenticated, RoomController.index) //untuk mendapatkan semua room
     router.post('/room', authenticated, RoomController.store) //untuk membuat room baru
     router.patch('/room/:id', authenticated, RoomController.update) //untuk merubah room
+    router.delete('/room/:id', authenticated, RoomController.delete) //untuk delete room
 
     //API Customer
     router.get('/customers', authenticated, CustomerController.index) //untuk mendapatkan semua customer

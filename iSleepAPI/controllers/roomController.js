@@ -35,6 +35,13 @@ exports.update = (req, res) => {
         .then(result => res.send(result))
         .catch(err => res.send(err))
 }
+exports.delete = (req, res) => {
+    Rooms.destroy({
+        where: { id: req.params.id },
+    })
+        .then(result => { res.send(result) })
+        .catch(err => { res.send(err) })
+}
 
 exports.checkin = (req, res) => {
     Rooms.findAll({

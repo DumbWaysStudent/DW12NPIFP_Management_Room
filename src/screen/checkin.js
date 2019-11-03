@@ -11,10 +11,11 @@ import {
     Dimensions,
     Picker
 } from 'react-native';
-import { Button, Item, Input } from 'native-base';
+import { Button, Item, Input, Row } from 'native-base';
 import HeaderComponent from '../assets/component/HeaderComponent'
 import Modal, { ModalContent, ModalTitle, ModalButton, ModalFooter } from 'react-native-modals';
 import { FlatGrid } from 'react-native-super-grid';
+import moment from "moment";
 import { connect } from 'react-redux'
 import * as actionOrder from './../redux/actions/actionOrder'
 import * as actionCustomer from './../redux/actions/actionCustomer'
@@ -34,6 +35,9 @@ class checkin extends Component {
             CheckInVisible: false,
             CheckOutVisible: false,
         };
+        this.interval = setInterval(() => {
+            this.refreshData()
+        }, 30000)
     }
 
     async componentDidMount() {
@@ -41,6 +45,27 @@ class checkin extends Component {
 
         await this.props.handleGetOrder(token)
         await this.props.handleGetCustomer(token)
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval)
+    }
+
+    async refreshData() {
+        const data = await this.props.dataOrder.data
+        const token = await AsyncStorage.getItem('userToken')
+        await this.props.handleGetOrder(token)
+
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].Orders[0] !== undefined) {
+                if (moment(data[i].Orders[0].order_end_time).diff(moment(), 'm') <= 0) {
+                    console.log(data[i].Orders[0].order_end_time);
+                    this.setState({ idRoom: data[i].id })
+                    console.log('data id room', data[i].id)
+                    this._handleAddCheckOut()
+                }
+            }
+        }
     }
 
     //Handle color style in button
@@ -96,13 +121,15 @@ class checkin extends Component {
         this.setState({ is_booked: 'true', is_done: 'false' })
         const token = await AsyncStorage.getItem('userToken')
         const { idRoom, idCustomer, duration, is_booked, is_done } = this.state
+        const order_end_time = moment().add(duration, 'm')
         const data = await {
-            idRoom, idCustomer, duration, is_booked, is_done
+            idRoom, idCustomer, duration, is_booked, is_done, order_end_time
         }
-        console.log(data)
+        console.log('handle add check in', data)
         await this.props.handleAddCheckIn(data, token)
         await this.props.handleGetOrder(token)
         await this.setState({ CheckInVisible: false })
+        await this._handleClearState()
     }
 
     async _handleAddCheckOut() {
@@ -111,8 +138,8 @@ class checkin extends Component {
         const data = {
             idRoom
         }
-        console.log(data)
-        console.log(token)
+        // console.log(data)
+        // console.log(token)
         await this.props.handleAddCheckOut(data, token)
         await this.props.handleGetOrder(token)
         await this.setState({ CheckOutVisible: false })
@@ -128,7 +155,7 @@ class checkin extends Component {
                 <HeaderComponent titlename='Check In' />
                 <FlatGrid
                     items={dataOrder}
-                    itemDimension={90}
+                    itemDimension={130}
                     renderItem={({ item }) =>
                         <View style={{ flexDirection: 'row', flex: 1, margin: 3 }}>
                             <TouchableOpacity style={this._handleColor(item)} onPress={() => this._handleCheck(item)} >
@@ -170,13 +197,22 @@ class checkin extends Component {
                             <Item inlineLabel style={{ backgroundColor: '#95a5a6' }} >
                                 <Input disabled value={this.state.roomname} />
                             </Item>
-                            <Text>Customer</Text>
+                            <View style={{ flexDirection: 'row', width: Dimensions.get('window').width }}>
+                                <View style={{ marginRight: 130 }}>
+                                    <Text>Customer</Text>
+                                </View>
+                                <Text onPress={() => {
+                                    this.setState({ CheckInVisible: false }),
+                                        this.props.navigation.navigate('customer')
+                                }}>+ add Customer</Text>
+                            </View>
                             <Picker
                                 style={{ height: 50, width: Dimensions.get('window').width * 0.60 }}
                                 selectedValue={this.state.idCustomer}
                                 onValueChange={(itemValue) =>
                                     this.setState({ idCustomer: itemValue })
                                 }>
+                                <Picker.Item label={'Pilih Customer'} value={'Pilih Customer'} />
                                 {dataCustomer.map((item, index) =>
                                     <Picker.Item key={item.id} label={`${item.name} - ${item.phone}`} value={item.id} />
                                 )}
@@ -278,19 +314,19 @@ const styles = StyleSheet.create({
     },
     itemStyleGrey: {
         height: 120,
-        width: Dimensions.get('window').width * 0.30,
+        width: Dimensions.get('window').width * 0.45,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#2c3e50',
-        borderRadius: 190
+        borderRadius: 20
     },
     itemStyleGreen: {
         height: 120,
-        width: Dimensions.get('window').width * 0.30,
+        width: Dimensions.get('window').width * 0.45,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#75AF34',
-        borderRadius: 190
+        borderRadius: 20
     },
     fontRoom: {
         color: 'white'
