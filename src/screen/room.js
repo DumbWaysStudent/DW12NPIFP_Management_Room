@@ -66,7 +66,7 @@ class room extends Component {
                 <HeaderComponent titlename='Room' />
                 <FlatGrid
                     items={dataRoom}
-                    itemDimension={90}
+                    itemDimension={130}
                     renderItem={({ item }) =>
                         <View style={{ flexDirection: 'row', flex: 1, margin: 3, alignContent: 'flex-start', justifyContent: 'flex-start' }}>
                             <TouchableOpacity style={styles.itemStyle} onPress={() => this._handleShowEdit(item)}>
@@ -170,11 +170,11 @@ const styles = StyleSheet.create({
     },
     itemStyle: {
         height: 120,
-        width: Dimensions.get('window').width * 0.30,
+        width: Dimensions.get('window').width * 0.45,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#34afa9',
-        borderRadius: 190
+        borderRadius: 20
     },
     addButton: {
         alignSelf: 'center',
