@@ -1,7 +1,8 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const rooms = sequelize.define('rooms', {
-    roomname: DataTypes.STRING
+    roomname: DataTypes.STRING,
+    imageRoom: DataTypes.STRING
   }, {});
   rooms.associate = function (models) {
     // rooms.belongsTo(models.orders, {

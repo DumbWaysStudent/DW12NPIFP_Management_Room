@@ -74,7 +74,7 @@ export default class SignIn extends Component {
                             <Button rounded style={styles.buttonLogin} onPress={() => this.authUsernamePassword()}>
                                 <Text style={styles.textButtonSignIn}> SIGN IN </Text>
                             </Button>
-                            <Button rounded style={styles.buttonLogin} onPress={() => this.props.navigation.navigate('signup')}>
+                            <Button rounded style={styles.buttonLogin} onPress={() => this.props.navigation.navigate('register')}>
                                 <Text style={styles.textButtonSignIn}> REGISTER </Text>
                             </Button>
                         </View>
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     signInBg: {
-        backgroundColor: 'rgba(118,176,53,0.5)',
+        backgroundColor: 'rgba(118,176,53,0.4)',
         flex: 1,
         justifyContent: 'center',
         alignContent: 'center'

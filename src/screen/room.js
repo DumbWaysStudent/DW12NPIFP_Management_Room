@@ -1,24 +1,30 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, StyleSheet, AsyncStorage, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, FlatList, StyleSheet, AsyncStorage, TouchableOpacity, Dimensions, ImageBackground, Image, StatusBar } from 'react-native';
 import { Item, Button, Input, Icon } from "native-base";
+import ImagePicker from 'react-native-image-picker';
 
 import HeaderComponent from '../assets/component/HeaderComponent'
 
 import { FlatGrid } from 'react-native-super-grid';
 import Modal, { ModalContent, ModalTitle, ModalButton, ModalFooter } from 'react-native-modals';
 
+import { API_SERV } from '../assets/server'
+
 import { connect } from 'react-redux'
 import * as actionRoom from './../redux/actions/actionRoom'
+import * as actionCustomer from './../redux/actions/actionCustomer'
 
 class room extends Component {
     constructor(props) {
         super(props);
+        this.selectPhoto = this.selectPhoto.bind(this);
         this.state = {
             id: '',
             roomname: '',
             token: '',
             AddRoomVisible: false,
             EditRoomVisible: false,
+            imageSource: '',
 
         };
     }
@@ -26,19 +32,61 @@ class room extends Component {
         const token = await AsyncStorage.getItem('userToken')
         this.setState({ token })
 
+        await this.props.handleGetCustomer(token)
         await this.props.handleGetRoom(token)
     }
 
-    _handleClearState = () => {
+    selectPhoto() {
+        const options = {
+            title: 'Select Photo',
+            quality: 1.0,
+            maxWidth: 500,
+            maxHeight: 500,
+            storageOptions: {
+                skipBackup: true,
+            },
+        };
+        ImagePicker.showImagePicker(options, response => {
+            console.log('Response = ', response);
+            if (response.didCancel) {
+                console.log('User cancelled photo picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                let source = {
+                    uri: response.uri,
+                    type: response.type,
+                    name: response.fileName,
+                    data: response.data
+                };
+                console.log('ini adalah source', source)
+                this.setState({
+                    imageSource: source,
+                });
+            }
+        });
+    }
 
-        this.setState({ AddRoomVisible: false, roomname: '' })
+    _handleClearState = () => {
+        this.setState({
+            id: '',
+            roomname: '',
+            token: '',
+            AddRoomVisible: false,
+            EditRoomVisible: false,
+            imageSource: '',
+        })
     }
 
     async _handleAddRoom() {
-        const { roomname, token } = this.state
-        const data = {
-            roomname
-        }
+        const data = new FormData();
+        const { token } = this.state;
+        data.append('roomname', this.state.roomname);
+        data.append('imageRoom', this.state.imageSource);
+
+
         await this.props.handleAddRoom(data, token)
         await this.props.handleGetRoom(token)
         await this.setState({ AddRoomVisible: false })
@@ -50,10 +98,12 @@ class room extends Component {
     }
 
     async _handleEditRoom() {
-        const { id, roomname, token } = this.state
-        const data = {
-            roomname
-        }
+        const data = new FormData();
+        const { id, token } = this.state
+        data.append('roomname', this.state.roomname);
+        data.append('imageRoom', this.state.imageSource);
+
+
         await this.props.handleEditRoom(id, data, token)
         await this.props.handleGetRoom(token)
         await this.setState({ EditRoomVisible: false })
@@ -64,14 +114,25 @@ class room extends Component {
         return (
             <View style={styles.pageStyle}>
                 <HeaderComponent titlename='Room' />
+                <StatusBar backgroundColor="#75AF34" barStyle="light-content" />
                 <FlatGrid
                     items={dataRoom}
                     itemDimension={130}
                     renderItem={({ item }) =>
                         <View style={{ flexDirection: 'row', flex: 1, margin: 3, alignContent: 'flex-start', justifyContent: 'flex-start' }}>
-                            <TouchableOpacity style={styles.itemStyle} onPress={() => this._handleShowEdit(item)}>
-                                <Text style={{ color: 'white', fontSize: 14 }}>{item.roomname}</Text>
-                            </TouchableOpacity>
+                            <ImageBackground
+                                style={styles.itemStyle}
+                                imageStyle={{ borderRadius: 20 }}
+                                source={{ uri: `${API_SERV}/static/` + item.imageRoom }}
+                            >
+                                <TouchableOpacity style={styles.itemStyleBtn} onPress={() => this._handleShowEdit(item)}>
+                                    <View style={styles.textBg}>
+                                        <View style={{ marginLeft: 10, marginBottom: 10 }}>
+                                            <Text style={styles.textStyle}>{item.roomname}</Text>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                            </ImageBackground>
                         </View>
                     }
                     keyExtractor={(item, index) => index.toString()
@@ -112,6 +173,19 @@ class room extends Component {
                         <Item rounded style={styles.inputStyle}>
                             <Input autoCapitalize='none' returnKeyType='next' placeholder='Room Name' placeholderTextColor='black' style={styles.txtFormStyle} value={this.state.roomname} onChangeText={(roomname) => this.setState({ roomname })} />
                         </Item>
+                        {
+                            this.state.imageSource ? <Image source={this.state.imageSource} style={{ width: '80%', height: 200, resizeMode: 'contain', alignSelf: 'center' }} /> : <Text>Photo</Text>
+                        }
+
+                        {/* <Button
+                            primary
+                            // style={style.btncamera}
+                            rounded
+                            onPress={this.selectPhoto.bind(this)}
+                        >
+                            <Text>Select Photo</Text>
+                        </Button> */}
+                        <Icon style={{ alignSelf: 'center' }} onPress={this.selectPhoto.bind(this)} type='Ionicons' name='camera' />
                     </ModalContent>
                 </Modal>
                 {/* END SCRIPT ADD ROOM */}
@@ -130,7 +204,7 @@ class room extends Component {
                             <ModalButton
                                 text="CANCEL"
                                 textStyle={{ color: '#000' }}
-                                onPress={() => this.setState({ EditRoomVisible: false })}
+                                onPress={() => { this._handleClearState() }}
                             />
                             <ModalButton
                                 style={{ backgroundColor: '#34afa9' }}
@@ -146,6 +220,20 @@ class room extends Component {
                         <Item rounded style={styles.inputStyle}>
                             <Input autoCapitalize='none' returnKeyType='next' placeholder='Room Name' placeholderTextColor='black' style={styles.txtFormStyle} value={this.state.roomname} onChangeText={(roomname) => this.setState({ roomname })} />
                         </Item>
+
+                        {
+                            this.state.imageSource ? <Image source={this.state.imageSource} style={{ width: '80%', height: 200, resizeMode: 'contain', alignSelf: 'center' }} /> : <Text>Photo</Text>
+                        }
+
+                        {/* <Button
+                            primary
+                            // style={style.btncamera}
+                            rounded
+                            onPress={this.selectPhoto.bind(this)}
+                        >
+                            <Text>Select Photo</Text>
+                        </Button> */}
+                        <Icon style={{ alignSelf: 'center' }} onPress={this.selectPhoto.bind(this)} type='Ionicons' name='camera' />
                     </ModalContent>
                 </Modal>
                 {/* END SCRIPT EDIT ROOM */}
@@ -176,6 +264,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#34afa9',
         borderRadius: 20
     },
+    itemStyleBtn: {
+        height: 120,
+        width: Dimensions.get('window').width * 0.45,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        backgroundColor: 'rgba(52,175,169,0.5)',
+        borderRadius: 20
+    },
     addButton: {
         alignSelf: 'center',
         alignItems: 'center',
@@ -187,8 +283,17 @@ const styles = StyleSheet.create({
     },
     textStyle: {
         fontSize: 14,
-        alignSelf: 'center',
+        fontWeight: 'bold',
+        color: 'white',
+        alignSelf: 'flex-start',
         justifyContent: 'center',
+    },
+    textBg: {
+        backgroundColor: '#34afa9',
+        alignSelf: 'flex-start',
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+        width: '100 %'
     },
 
     //MODAL ADD ROOM
@@ -208,6 +313,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        handleGetCustomer: (token) => dispatch(actionCustomer.handleGetCustomer(token)),
         handleGetRoom: (token) => dispatch(actionRoom.handleGetRoom(token)),
         handleAddRoom: (data, token) => dispatch(actionRoom.handleAddRoom(data, token)),
         handleEditRoom: (id, data, token) => dispatch(actionRoom.handleEditRoom(id, data, token)),

@@ -4,6 +4,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 import MemberNavigation from '../navigator/MemberNavigation'
 import login from '../screen/login'
+import register from '../screen/register'
 import addCustomer from '../screen/addCustomer'
 import editCustomer from '../screen/editCustomer'
 
@@ -21,12 +22,12 @@ const RootNavigation = createStackNavigator({
             header: null,
         }
     },
-    // signup: {
-    //     screen: SignUp,
-    //     navigationOptions: {
-    //         header: null,
-    //     }
-    // },
+    register: {
+        screen: register,
+        navigationOptions: {
+            header: null,
+        }
+    },
     MemberNavigation: {
         screen: MemberNavigation,
         navigationOptions: {

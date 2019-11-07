@@ -9,16 +9,40 @@ export const handleGetCustomer = (token) => ({
     })
 });
 
-export const handleAddCustomer = (data, token) => ({
-    type: types.POST_CUSTOMER,
-    payload: axios.post(`${API_SERV}/api/v2/customer`, data, {
-        headers: { "Authorization": `Bearer ${token}` }
-    })
-});
+export const handleAddCustomer = (data, token) => {
+    console.log('ini data di action', data)
+    return ({
+        type: types.POST_CUSTOMER,
+        payload: axios({
+            method: 'post',
+            url: `${API_SERV}/api/v2/customer`,
+            data: data,
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Accept": 'application/json',
+                "Content-Type": 'multipart/form-data'
+            }
+        })
+    });
+}
 
-export const handleEditCustomer = (id, data, token) => ({
-    type: types.PATCH_CUSTOMER,
-    payload: axios.patch(`${API_SERV}/api/v2/customer/${id}`, data, {
-        headers: { "Authorization": `Bearer ${token}` }
-    })
-});
+export const handleEditCustomer = (id, data, token) => {
+    console.log('ini data dari action Patch Customer', data)
+    return ({
+        type: types.PATCH_CUSTOMER,
+        payload: axios({
+            method: 'patch',
+            url: `${API_SERV}/api/v2/customer/${id}`,
+            data: data,
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Accept": 'application/json',
+                "Content-Type": 'multipart/form-data'
+            }
+        })
+    });
+}
+
+// .patch(`${API_SERV}/api/v2/customer/${id}`, data, {
+//     headers: { "Authorization": `Bearer ${token}` }
+// })

@@ -9,25 +9,29 @@ const initialState = {
 
 export default function reducerAuth(state = initialState, action) {
     switch (action.type) {
-        case `${types.LOGIN_USERS}_PENDING`:
+        case `${types.GET_USER}_PENDING`:
             return {
                 ...state,
-                isLoading: true
+                isLoading: true,
+                isError: false,
+                isSuccess: false,
             };
 
-        case `${types.LOGIN_USERS}_FULFILLED`:
+        case `${types.GET_USER}_FULFILLED`:
             return {
                 ...state,
                 isLoading: false,
+                isError: false,
                 isSuccess: true,
                 data: action.payload.data
             };
 
-        case `${types.LOGIN_USERS}_REJECTED`:
+        case `${types.GET_USER}_REJECTED`:
             return {
                 ...state,
                 isLoading: false,
-                isError: true
+                isError: true,
+                isSuccess: false,
             };
         default:
             return state;

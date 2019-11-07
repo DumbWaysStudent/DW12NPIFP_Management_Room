@@ -10,10 +10,12 @@ exports.login = (req, res) => {
         .then(user => {
             if (user) {
                 const token = jwt.sign({ userId: user.id }, 'my-secret-key')
+                const id = user.id
                 res.send({
                     message: "success",
+                    id,
+                    username,
                     token,
-                    username
                 })
             } else {
                 res.send({
@@ -41,7 +43,28 @@ exports.register = async (req, res) => {
 exports.getUser = (req, res) => {
     const idUser = req.params.id
     User.findOne({ where: { id: idUser } })
+
         .then(result => res.send(result))
         .catch(err => res.send(err))
 }
 
+
+exports.editUser = async (req, res) => {
+    var { username, password } = req.body
+    data = {
+        username: username,
+        password: password,
+        userImg: req.file.filename
+    }
+    User.update(
+        data,
+        {
+            where: { id: req.params.id },
+            defaults: {
+                username: username,
+                password: password,
+                updateAt: new Date()
+            }
+        }).then(result => res.send(result))
+        .catch(result => res.send(result))
+}

@@ -2,19 +2,21 @@ import React, { Component } from 'react';
 import {
     View,
     Text,
-    FlatList,
     StyleSheet,
     AsyncStorage,
     TouchableOpacity,
-    Alert,
-    TouchableHighlight,
     Dimensions,
-    Picker
+    Picker,
+    ImageBackground,
+    StatusBar,
 } from 'react-native';
 import { Button, Item, Input, Row } from 'native-base';
 import HeaderComponent from '../assets/component/HeaderComponent'
 import Modal, { ModalContent, ModalTitle, ModalButton, ModalFooter } from 'react-native-modals';
 import { FlatGrid } from 'react-native-super-grid';
+
+import { API_SERV } from '../assets/server'
+
 import moment from "moment";
 import { connect } from 'react-redux'
 import * as actionOrder from './../redux/actions/actionOrder'
@@ -84,6 +86,21 @@ class checkin extends Component {
             return styles.itemStyleGreen
         }
     }
+    _handleColorBottom(item) {
+        if (item.Orders != undefined) {
+            const isBooked = item.Orders.map((item) => {
+                var status = item.is_booked;
+                return status;
+            });
+            if (isBooked[0] == true) {
+                return styles.textBgGrey
+            } else {
+                return styles.textBgGreen
+            }
+        } else {
+            return styles.textBgGreen
+        }
+    }
 
     _handleCheck = (item) => {
         if (item.Orders != undefined) {
@@ -108,12 +125,17 @@ class checkin extends Component {
     }
     _handleClearState() {
 
-        this.setState({ idRoom: '' })
-        this.setState({ roomname: '' })
-        this.setState({ idCustomer: '' })
-        this.setState({ nameCustomer: '' })
-        this.setState({ duration: '' })
-        this.setState({ CheckInVisible: false })
+        this.setState({
+            idRoom: '',
+            roomname: '',
+            nameCustomer: '',
+            idCustomer: '',
+            duration: '',
+            is_booked: '',
+            is_done: '',
+            CheckInVisible: false,
+            CheckOutVisible: false,
+        })
     }
 
     async _handleAddCheckIn() {
@@ -153,14 +175,25 @@ class checkin extends Component {
         return (
             <View style={styles.pageStyle}>
                 <HeaderComponent titlename='Check In' />
+                <StatusBar backgroundColor="#75AF34" barStyle="light-content" />
                 <FlatGrid
                     items={dataOrder}
                     itemDimension={130}
                     renderItem={({ item }) =>
                         <View style={{ flexDirection: 'row', flex: 1, margin: 3 }}>
-                            <TouchableOpacity style={this._handleColor(item)} onPress={() => this._handleCheck(item)} >
-                                <Text style={styles.textStyle}>{item.roomname}</Text>
-                            </TouchableOpacity>
+                            <ImageBackground
+                                style={styles.itemStyle}
+                                imageStyle={{ borderRadius: 20 }}
+                                source={{ uri: `${API_SERV}/static/` + item.imageRoom }}
+                            >
+                                <TouchableOpacity style={this._handleColor(item)} onPress={() => this._handleCheck(item)} >
+                                    <View style={this._handleColorBottom(item)}>
+                                        <View style={{ marginLeft: 10, marginBottom: 10, flexDirection: 'row' }}>
+                                            <Text style={styles.textStyle}>{item.roomname}</Text>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                            </ImageBackground>
                         </View>
                     }
                     keyExtractor={(item, index) => index.toString()
@@ -315,17 +348,17 @@ const styles = StyleSheet.create({
     itemStyleGrey: {
         height: 120,
         width: Dimensions.get('window').width * 0.45,
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         alignItems: 'center',
-        backgroundColor: '#2c3e50',
+        backgroundColor: 'rgba(44,62,80,0.4)',
         borderRadius: 20
     },
     itemStyleGreen: {
         height: 120,
         width: Dimensions.get('window').width * 0.45,
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         alignItems: 'center',
-        backgroundColor: '#75AF34',
+        backgroundColor: 'rgba(117,175,52,0.4)',
         borderRadius: 20
     },
     fontRoom: {
@@ -333,10 +366,32 @@ const styles = StyleSheet.create({
     },
     textStyle: {
         fontSize: 14,
-        alignSelf: 'center',
-        justifyContent: 'center',
+        alignSelf: 'flex-start',
+        fontWeight: 'bold',
         color: 'white'
     },
+    itemStyle: {
+        height: 120,
+        width: Dimensions.get('window').width * 0.45,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#34afa9',
+        borderRadius: 20
+    },
+    textBgGreen: {
+        backgroundColor: '#75AF34',
+        alignSelf: 'flex-start',
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+        width: '100 %'
+    },
+    textBgGrey: {
+        backgroundColor: 'rgb(44,62,80)',
+        alignSelf: 'flex-start',
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+        width: '100 %'
+    }
 })
 
 const mapStateToProps = state => {

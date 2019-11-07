@@ -15,6 +15,7 @@ exports.store = (req, res) => {
         where: { roomname },
         defaults: {
             roomname: roomname,
+            imageRoom: req.file.filename,
             createdAt: new Date(),
             updateAt: new Date()
         }
@@ -23,11 +24,15 @@ exports.store = (req, res) => {
 }
 
 exports.update = (req, res) => {
+    var roomname = req.body.roomname;
+    const data = { roomname: roomname, imageRoom: req.file.filename }
+
     Rooms.update(
-        req.body,
+        data,
         {
             where: { id: req.params.id },
             defaults: {
+                roomname: roomname,
                 updateAt: new Date()
             }
         }

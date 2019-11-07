@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, AsyncStorage, ScrollView, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { Header, Body, Title, Button, Image, Icon, Fab, Item, Input } from "native-base";
+import { View, Text, FlatList, AsyncStorage, ScrollView, StyleSheet, TouchableOpacity, Dimensions, Image, StatusBar } from 'react-native';
+import { Icon, Fab, Item, Input, Thumbnail } from "native-base";
 import Modal, { ModalContent, ModalTitle, ModalButton, ModalFooter } from 'react-native-modals';
+import ImagePicker from 'react-native-image-picker';
 
 import HeaderComponent from '../assets/component/HeaderComponent'
+
+import { API_SERV } from '../assets/server'
 
 import { connect } from 'react-redux'
 import * as actionCustomer from './../redux/actions/actionCustomer'
@@ -11,14 +14,16 @@ import * as actionCustomer from './../redux/actions/actionCustomer'
 class customer extends Component {
     constructor(props) {
         super(props);
+        this.selectPhoto = this.selectPhoto.bind(this);
         this.state = {
             id: '',
             name: '',
             idNumber: '',
             phone: '',
             token: '',
+            imageSource: '',
             AddCustomer: false,
-            editCustomer: false,
+            EditCustomer: false,
         };
     }
 
@@ -29,11 +34,63 @@ class customer extends Component {
         await this.props.handleGetCustomer(token)
     }
 
+    selectPhoto() {
+        const options = {
+            title: 'Select Photo',
+            quality: 1.0,
+            maxWidth: 500,
+            maxHeight: 500,
+            storageOptions: {
+                skipBackup: true,
+            },
+        };
+        ImagePicker.showImagePicker(options, response => {
+            console.log('Response = ', response);
+            if (response.didCancel) {
+                console.log('User cancelled photo picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                let source = {
+                    uri: response.uri,
+                    type: response.type,
+                    name: response.fileName,
+                    data: response.data
+                };
+                console.log('ini adalah source', source)
+                this.setState({
+                    imageSource: source,
+                });
+            }
+        });
+    }
+
+    _handleClearState = () => {
+        this.setState({
+            id: '',
+            name: '',
+            idNumber: '',
+            phone: '',
+            token: '',
+            imageSource: '',
+            AddCustomer: false,
+            EditCustomer: false,
+        })
+    }
+
     async _handleAddCustomer() {
         const { name, idNumber, phone, token } = this.state
-        const data = await {
-            name, idNumber, phone
-        }
+        // const data = await {
+        //     name, idNumber, phone
+        // }
+        const data = new FormData();
+        data.append('name', name)
+        data.append('idNumber', idNumber)
+        data.append('phone', phone)
+        data.append('image', this.state.imageSource)
+        console.log('ini data di function _handleAddCustomer', data)
         await this.props.handleAddCustomer(data, token)
         await this.props.handleGetCustomer(token)
         await this.setState({ AddCustomer: false })
@@ -53,9 +110,15 @@ class customer extends Component {
 
     async _handleEditCustomer() {
         const { id, name, idNumber, phone, token } = this.state
-        const data = await {
-            name, idNumber, phone
-        }
+        // const data = await {
+        //     name, idNumber, phone
+        // }
+        const data = new FormData()
+        data.append('name', name)
+        data.append('idNumber', idNumber)
+        data.append('phone', phone)
+        data.append('image', this.state.imageSource)
+
         await this.props.handleEditCustomer(id, data, token)
         await this.props.handleGetCustomer(token)
         await this.setState({ EditCustomer: false })
@@ -67,6 +130,7 @@ class customer extends Component {
         return (
             <View style={{ flex: 1 }}>
                 <HeaderComponent titlename='Customer' />
+                <StatusBar backgroundColor="#75AF34" barStyle="light-content" />
                 <ScrollView style={styles.scrollViewStle}>
                     <FlatList
                         data={dataCustomer}
@@ -75,7 +139,10 @@ class customer extends Component {
                             <View style={{ flexDirection: 'row', flex: 1, margin: 3 }}>
                                 <TouchableOpacity style={styles.cardItem} onPress={() => this._handleShowEditCustomer(item)} >
                                     <View style={styles.imgStyle}>
-                                        <Icon name="contact" style={{ color: '#2f3640', fontSize: 75 }} />
+                                        {/* <Icon name="contact" style={{ color: 'white', fontSize: 75 }} /> */}
+                                        {
+                                            item.image ? <Thumbnail source={{ uri: `${API_SERV}/static/` + item.image }} style={{ width: 80, height: 80, resizeMode: 'contain', alignSelf: 'center', justifyContent: 'center' }} /> : <Icon name="contact" style={{ color: 'white', fontSize: 75 }} />
+                                        }
                                     </View>
                                     <View style={styles.cardItemDetail}>
                                         <Text style={styles.fontDetail}>Nama</Text>
@@ -119,8 +186,8 @@ class customer extends Component {
                             <ModalButton
                                 text="CANCEL"
                                 textStyle={{ color: '#000' }}
-                                onPress={() => this.setState({ AddCustomer: false })}
-                            // onPress={() => { this._handleClearState() }}
+                                // onPress={() => this.setState({ AddCustomer: false })}
+                                onPress={() => { this._handleClearState() }}
                             />
                             <ModalButton
                                 style={{ backgroundColor: '#75AF34' }}
@@ -154,6 +221,11 @@ class customer extends Component {
                                 <Item rounded>
                                     <Input style={styles.inputStyle} placeholder='Phone' keyboardType={'numeric'} value={this.state.phone} onChangeText={(phone) => this.setState({ phone })} />
                                 </Item>
+                                {
+                                    // console.log('ini adalah imageSource di body', this.state.imageSource)
+                                    this.state.imageSource ? <Image source={this.state.imageSource} style={{ width: '80%', height: 200, resizeMode: 'contain', alignSelf: 'center' }} /> : <Text>Photo</Text>
+                                }
+                                <Icon style={{ alignSelf: 'center' }} onPress={this.selectPhoto.bind(this)} type='Ionicons' name='camera' />
                             </View>
                         </View>
                     </ModalContent>
@@ -173,8 +245,8 @@ class customer extends Component {
                             <ModalButton
                                 text="CANCEL"
                                 textStyle={{ color: '#000' }}
-                                onPress={() => this.setState({ EditCustomer: false })}
-                            // onPress={() => { this._handleClearState() }}
+                                // onPress={() => this.setState({ EditCustomer: false })}
+                                onPress={() => { this._handleClearState() }}
                             />
                             <ModalButton
                                 style={{ backgroundColor: '#75AF34' }}
@@ -208,6 +280,11 @@ class customer extends Component {
                                 <Item rounded>
                                     <Input style={styles.inputStyle} placeholder='Phone' keyboardType={'numeric'} value={this.state.phone} onChangeText={(phone) => this.setState({ phone })} />
                                 </Item>
+                                {
+                                    // console.log('ini adalah imageSource di body', this.state.imageSource)
+                                    this.state.imageSource ? <Image source={this.state.imageSource} style={{ width: '80%', height: 200, resizeMode: 'contain', alignSelf: 'center' }} /> : <Text>Photo</Text>
+                                }
+                                <Icon style={{ alignSelf: 'center' }} onPress={this.selectPhoto.bind(this)} type='Ionicons' name='camera' />
                             </View>
                         </View>
                     </ModalContent>
@@ -241,27 +318,32 @@ const styles = StyleSheet.create({
 
     },
     cardItem: {
-        borderWidth: 2,
         borderRadius: 20,
         width: 360,
         height: 100,
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 10,
-        backgroundColor: '#fdcb6e'
+        padding: 20,
+        backgroundColor: '#75AF34'
     },
     cardItemDetail: {
         marginLeft: 10,
     },
-    imgStyle: {
-
-    },
+    // imgStyle: {
+    //     height: 80,
+    //     width: 80,
+    //     borderWidth: 2,
+    //     borderColor: 'black',
+    //     borderRadius: 50
+    // },
     fontDetail: {
-        fontSize: 15
+        fontSize: 15,
+        color: 'white'
     },
     fontDetailContent: {
         fontSize: 15,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        color: 'white'
     }
 
 });
