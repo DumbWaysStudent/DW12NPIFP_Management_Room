@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, AsyncStorage, ScrollView, StyleSheet, TouchableOpacity, Dimensions, Image, StatusBar } from 'react-native';
-import { Icon, Fab, Item, Input, Thumbnail } from "native-base";
+import { View, Text, FlatList, ScrollView, StyleSheet, TouchableOpacity, Dimensions, Image, StatusBar } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage'
+import { Icon, Fab, Item, Input, Thumbnail, Spinner } from "native-base";
 import Modal, { ModalContent, ModalTitle, ModalButton, ModalFooter } from 'react-native-modals';
 import ImagePicker from 'react-native-image-picker';
+import firebase from 'firebase';
+import moment from 'moment';
 
 import HeaderComponent from '../assets/component/HeaderComponent'
 
@@ -10,6 +13,21 @@ import { API_SERV } from '../assets/server'
 
 import { connect } from 'react-redux'
 import * as actionCustomer from './../redux/actions/actionCustomer'
+
+var firebaseConfig = {
+    apiKey: "AIzaSyBo-LYwIHHfoELqUJqLOvZJ9B3gjmLbsrk",
+    authDomain: "isleep-1694d.firebaseapp.com",
+    databaseURL: "https://isleep-1694d.firebaseio.com",
+    projectId: "isleep-1694d",
+    storageBucket: "isleep-1694d.appspot.com",
+    messagingSenderId: "994092262246",
+    appId: "1:994092262246:web:c48e90628d786a34d29ea7",
+    measurementId: "G-7NKFBGVLB9"
+};
+// Initialize Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 
 class customer extends Component {
     constructor(props) {
@@ -24,6 +42,7 @@ class customer extends Component {
             imageSource: '',
             AddCustomer: false,
             EditCustomer: false,
+            isLoading: false,
         };
     }
 
@@ -53,18 +72,53 @@ class customer extends Component {
             } else if (response.customButton) {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
-                let source = {
-                    uri: response.uri,
-                    type: response.type,
-                    name: response.fileName,
-                    data: response.data
-                };
+                // let source = {
+                //     uri: response.uri,
+                //     type: response.type,
+                //     name: response.fileName,
+                //     data: response.data
+                // };
+                let source= response.uri
                 console.log('ini adalah source', source)
                 this.setState({
                     imageSource: source,
+                    isLoading: true
                 });
+                this.uploadImageAsync(source);
             }
         });
+    }
+
+    async uploadImageAsync(uri) {
+        // Why are we using XMLHttpRequest? See:
+        // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+                console.log(e);
+                reject(new TypeError('Network request failed'));
+            };
+            xhr.responseType = 'blob';
+            xhr.open('GET', uri, true);
+            xhr.send(null);
+        });
+        const ref = firebase
+            .storage()
+            .ref()
+            .child(moment().toISOString());
+        const snapshot = await ref.put(blob);
+        // We're done with the blob, close and release it
+        blob.close();
+        console.log('link', await snapshot.ref.getDownloadURL());
+        this.setState({
+            imageSource: await snapshot.ref.getDownloadURL(),
+            isLoading: false
+        });
+        console.log(this.state.imageSource);
+        return await snapshot.ref.getDownloadURL();
     }
 
     _handleClearState = () => {
@@ -82,14 +136,17 @@ class customer extends Component {
 
     async _handleAddCustomer() {
         const { name, idNumber, phone, token } = this.state
-        // const data = await {
-        //     name, idNumber, phone
-        // }
-        const data = new FormData();
-        data.append('name', name)
-        data.append('idNumber', idNumber)
-        data.append('phone', phone)
-        data.append('image', this.state.imageSource)
+        const data = await {
+            name,
+            idNumber,
+            phone,
+            image: this.state.imageSource
+        }
+        // const data = new FormData();
+        // data.append('name', name)
+        // data.append('idNumber', idNumber)
+        // data.append('phone', phone)
+        // data.append('image', this.state.imageSource)
         console.log('ini data di function _handleAddCustomer', data)
         await this.props.handleAddCustomer(data, token)
         await this.props.handleGetCustomer(token)
@@ -98,7 +155,6 @@ class customer extends Component {
     }
 
     _handleShowEditCustomer(item) {
-        const { name, idNumber, phone } = this.state
         this.setState({
             id: item.id,
             name: item.name,
@@ -110,14 +166,17 @@ class customer extends Component {
 
     async _handleEditCustomer() {
         const { id, name, idNumber, phone, token } = this.state
-        // const data = await {
-        //     name, idNumber, phone
-        // }
-        const data = new FormData()
-        data.append('name', name)
-        data.append('idNumber', idNumber)
-        data.append('phone', phone)
-        data.append('image', this.state.imageSource)
+        const data = await {
+            name,
+            idNumber,
+            phone,
+            image: this.state.imageSource
+        }
+        // const data = new FormData()
+        // data.append('name', name)
+        // data.append('idNumber', idNumber)
+        // data.append('phone', phone)
+        // data.append('image', this.state.imageSource)
 
         await this.props.handleEditCustomer(id, data, token)
         await this.props.handleGetCustomer(token)
@@ -141,7 +200,7 @@ class customer extends Component {
                                     <View style={styles.imgStyle}>
                                         {/* <Icon name="contact" style={{ color: 'white', fontSize: 75 }} /> */}
                                         {
-                                            item.image ? <Thumbnail source={{ uri: `${API_SERV}/static/` + item.image }} style={{ width: 80, height: 80, resizeMode: 'contain', alignSelf: 'center', justifyContent: 'center' }} /> : <Icon name="contact" style={{ color: 'white', fontSize: 75 }} />
+                                            item.image ? <Thumbnail source={{ uri:item.image }} style={{ width: 80, height: 80, resizeMode: 'contain', alignSelf: 'center', justifyContent: 'center' }} /> : <Icon name="contact" style={{ color: 'white', fontSize: 75 }} />
                                         }
                                     </View>
                                     <View style={styles.cardItemDetail}>
@@ -222,8 +281,7 @@ class customer extends Component {
                                     <Input style={styles.inputStyle} placeholder='Phone' keyboardType={'numeric'} value={this.state.phone} onChangeText={(phone) => this.setState({ phone })} />
                                 </Item>
                                 {
-                                    // console.log('ini adalah imageSource di body', this.state.imageSource)
-                                    this.state.imageSource ? <Image source={this.state.imageSource} style={{ width: '80%', height: 200, resizeMode: 'contain', alignSelf: 'center' }} /> : <Text>Photo</Text>
+                                    this.state.isLoading == true ? <Spinner color='#34afa9' /> : this.state.imageSource ? <Image source={{ uri: this.state.imageSource }} style={{ width: '80%', height: 200, resizeMode: 'contain', alignSelf: 'center' }} /> : <Text style={{ alignSelf: 'center' }}>Foto Customer</Text>
                                 }
                                 <Icon style={{ alignSelf: 'center' }} onPress={this.selectPhoto.bind(this)} type='Ionicons' name='camera' />
                             </View>
@@ -281,8 +339,7 @@ class customer extends Component {
                                     <Input style={styles.inputStyle} placeholder='Phone' keyboardType={'numeric'} value={this.state.phone} onChangeText={(phone) => this.setState({ phone })} />
                                 </Item>
                                 {
-                                    // console.log('ini adalah imageSource di body', this.state.imageSource)
-                                    this.state.imageSource ? <Image source={this.state.imageSource} style={{ width: '80%', height: 200, resizeMode: 'contain', alignSelf: 'center' }} /> : <Text>Photo</Text>
+                                    this.state.isLoading == true ? <Spinner color='#34afa9' /> : this.state.imageSource ? <Image source={{ uri: this.state.imageSource }} style={{ width: '80%', height: 200, resizeMode: 'contain', alignSelf: 'center' }} /> : <Text style={{ alignSelf: 'center' }}>Foto Customer</Text>
                                 }
                                 <Icon style={{ alignSelf: 'center' }} onPress={this.selectPhoto.bind(this)} type='Ionicons' name='camera' />
                             </View>

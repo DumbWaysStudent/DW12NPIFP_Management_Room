@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, StyleSheet, AsyncStorage, TouchableOpacity, Dimensions, ImageBackground, Image, StatusBar } from 'react-native';
-import { Item, Button, Input, Icon } from "native-base";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Dimensions, ImageBackground, Image, StatusBar } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+import { Item, Button, Input, Icon, Spinner } from "native-base";
 import ImagePicker from 'react-native-image-picker';
+import firebase from 'firebase';
+import moment from 'moment';
 
 import HeaderComponent from '../assets/component/HeaderComponent'
 
@@ -14,6 +17,21 @@ import { connect } from 'react-redux'
 import * as actionRoom from './../redux/actions/actionRoom'
 import * as actionCustomer from './../redux/actions/actionCustomer'
 
+var firebaseConfig = {
+    apiKey: "AIzaSyBo-LYwIHHfoELqUJqLOvZJ9B3gjmLbsrk",
+    authDomain: "isleep-1694d.firebaseapp.com",
+    databaseURL: "https://isleep-1694d.firebaseio.com",
+    projectId: "isleep-1694d",
+    storageBucket: "isleep-1694d.appspot.com",
+    messagingSenderId: "994092262246",
+    appId: "1:994092262246:web:c48e90628d786a34d29ea7",
+    measurementId: "G-7NKFBGVLB9"
+};
+// Initialize Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
 class room extends Component {
     constructor(props) {
         super(props);
@@ -25,6 +43,7 @@ class room extends Component {
             AddRoomVisible: false,
             EditRoomVisible: false,
             imageSource: '',
+            isLoading: false,
 
         };
     }
@@ -55,18 +74,53 @@ class room extends Component {
             } else if (response.customButton) {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
-                let source = {
-                    uri: response.uri,
-                    type: response.type,
-                    name: response.fileName,
-                    data: response.data
-                };
-                console.log('ini adalah source', source)
+                // let source = {
+                //     uri: response.uri,
+                //     type: response.type,
+                //     name: response.fileName,
+                //     data: response.data
+                // };
+                let source = response.uri;
+                console.log('ini adalah source', source);
                 this.setState({
                     imageSource: source,
+                    isLoading: true
                 });
+                this.uploadImageAsync(source);
             }
         });
+    }
+
+    async uploadImageAsync(uri) {
+        // Why are we using XMLHttpRequest? See:
+        // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+                console.log(e);
+                reject(new TypeError('Network request failed'));
+            };
+            xhr.responseType = 'blob';
+            xhr.open('GET', uri, true);
+            xhr.send(null);
+        });
+        const ref = firebase
+            .storage()
+            .ref()
+            .child(moment().toISOString());
+        const snapshot = await ref.put(blob);
+        // We're done with the blob, close and release it
+        blob.close();
+        console.log('link', await snapshot.ref.getDownloadURL());
+        this.setState({
+            imageSource: await snapshot.ref.getDownloadURL(),
+            isLoading: false
+        });
+        console.log(this.state.imageSource);
+        return await snapshot.ref.getDownloadURL();
     }
 
     _handleClearState = () => {
@@ -81,11 +135,15 @@ class room extends Component {
     }
 
     async _handleAddRoom() {
-        const data = new FormData();
-        const { token } = this.state;
-        data.append('roomname', this.state.roomname);
-        data.append('imageRoom', this.state.imageSource);
+        const { token, roomname } = this.state;
+        // const data = new FormData();
+        // data.append('roomname', this.state.roomname);
+        // data.append('imageRoom', this.state.imageSource);
 
+        const data = {
+            roomname,
+            imageRoom: this.state.imageSource
+        }
 
         await this.props.handleAddRoom(data, token)
         await this.props.handleGetRoom(token)
@@ -93,15 +151,22 @@ class room extends Component {
     }
 
     _handleShowEdit(item) {
-        this.setState({ id: item.id, roomname: item.roomname })
-        this.setState({ EditRoomVisible: true })
+        this.setState({
+            id: item.id,
+            roomname: item.roomname,
+            EditRoomVisible: true
+        })
     }
 
     async _handleEditRoom() {
-        const data = new FormData();
-        const { id, token } = this.state
-        data.append('roomname', this.state.roomname);
-        data.append('imageRoom', this.state.imageSource);
+        const { id, roomname, token } = this.state
+        // const data = new FormData();
+        // data.append('roomname', this.state.roomname);
+        // data.append('imageRoom', this.state.imageSource);
+        const data = {
+            roomname,
+            imageRoom: this.state.imageSource
+        }
 
 
         await this.props.handleEditRoom(id, data, token)
@@ -123,7 +188,7 @@ class room extends Component {
                             <ImageBackground
                                 style={styles.itemStyle}
                                 imageStyle={{ borderRadius: 20 }}
-                                source={{ uri: `${API_SERV}/static/` + item.imageRoom }}
+                                source={{ uri: item.imageRoom }}
                             >
                                 <TouchableOpacity style={styles.itemStyleBtn} onPress={() => this._handleShowEdit(item)}>
                                     <View style={styles.textBg}>
@@ -174,17 +239,8 @@ class room extends Component {
                             <Input autoCapitalize='none' returnKeyType='next' placeholder='Room Name' placeholderTextColor='black' style={styles.txtFormStyle} value={this.state.roomname} onChangeText={(roomname) => this.setState({ roomname })} />
                         </Item>
                         {
-                            this.state.imageSource ? <Image source={this.state.imageSource} style={{ width: '80%', height: 200, resizeMode: 'contain', alignSelf: 'center' }} /> : <Text>Photo</Text>
+                            this.state.isLoading == true ? <Spinner color='#34afa9' /> : this.state.imageSource ? <Image source={{ uri: this.state.imageSource }} style={{ width: '80%', height: 200, resizeMode: 'contain', alignSelf: 'center' }} /> : <Text style={{ alignSelf: 'center' }}>Foto Ruangan</Text>
                         }
-
-                        {/* <Button
-                            primary
-                            // style={style.btncamera}
-                            rounded
-                            onPress={this.selectPhoto.bind(this)}
-                        >
-                            <Text>Select Photo</Text>
-                        </Button> */}
                         <Icon style={{ alignSelf: 'center' }} onPress={this.selectPhoto.bind(this)} type='Ionicons' name='camera' />
                     </ModalContent>
                 </Modal>
@@ -222,17 +278,8 @@ class room extends Component {
                         </Item>
 
                         {
-                            this.state.imageSource ? <Image source={this.state.imageSource} style={{ width: '80%', height: 200, resizeMode: 'contain', alignSelf: 'center' }} /> : <Text>Photo</Text>
+                            this.state.isLoading == true ? <Spinner color='#34afa9' /> : this.state.imageSource ? <Image source={{ uri: this.state.imageSource }} style={{ width: '80%', height: 200, resizeMode: 'contain', alignSelf: 'center' }} /> : <Text style={{ alignSelf: 'center' }}>Foto Ruangan</Text>
                         }
-
-                        {/* <Button
-                            primary
-                            // style={style.btncamera}
-                            rounded
-                            onPress={this.selectPhoto.bind(this)}
-                        >
-                            <Text>Select Photo</Text>
-                        </Button> */}
                         <Icon style={{ alignSelf: 'center' }} onPress={this.selectPhoto.bind(this)} type='Ionicons' name='camera' />
                     </ModalContent>
                 </Modal>

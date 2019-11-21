@@ -3,13 +3,13 @@ import {
     View,
     Text,
     StyleSheet,
-    AsyncStorage,
     TouchableOpacity,
     Dimensions,
     Picker,
     ImageBackground,
     StatusBar,
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { Button, Item, Input, Row } from 'native-base';
 import HeaderComponent from '../assets/component/HeaderComponent'
 import Modal, { ModalContent, ModalTitle, ModalButton, ModalFooter } from 'react-native-modals';
@@ -109,22 +109,27 @@ class checkin extends Component {
                 return status;
             });
             if (isBooked[0] == true) {
-                this.setState({ idOrder: item.Orders[0].id })
-                this.setState({ idRoom: item.id })
-                this.setState({ CheckOutVisible: true })
+                this.setState({
+                    idOrder: item.Orders[0].id,
+                    idRoom: item.id,
+                    CheckOutVisible: true
+                })
             } else {
-                this.setState({ idRoom: item.id })
-                this.setState({ roomname: item.roomname })
-                this.setState({ CheckInVisible: true })
+                this.setState({
+                    idRoom: item.id,
+                    roomname: item.roomname,
+                    CheckInVisible: true
+                })
             }
         } else {
-            this.setState({ idRoom: item.id })
-            this.setState({ roomname: item.roomname })
-            this.setState({ CheckInVisible: true })
+            this.setState({
+                idRoom: item.id,
+                roomname: item.roomname,
+                CheckInVisible: true
+            })
         }
     }
     _handleClearState() {
-
         this.setState({
             idRoom: '',
             roomname: '',
@@ -184,7 +189,7 @@ class checkin extends Component {
                             <ImageBackground
                                 style={styles.itemStyle}
                                 imageStyle={{ borderRadius: 20 }}
-                                source={{ uri: `${API_SERV}/static/` + item.imageRoom }}
+                                source={{ uri: item.imageRoom }}
                             >
                                 <TouchableOpacity style={this._handleColor(item)} onPress={() => this._handleCheck(item)} >
                                     <View style={this._handleColorBottom(item)}>

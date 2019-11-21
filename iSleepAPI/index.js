@@ -10,22 +10,7 @@ const app = express()
 const port = process.env.PORT || 4000
 
 //allow this app to receive incoming json request
-app.use(bodyParser.json());
-app.use('/static', express.static('uploads'));
-
-
-//multer
-var multer = require('multer');
-
-var storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/')
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + '.jpg')
-    }
-});
-var upload = multer({ storage: storage });
+app.use(bodyParser.json())
 
 // const UserController = require('./controllers/users')
 
@@ -35,41 +20,89 @@ var upload = multer({ storage: storage });
 app.get('/', (req, res) => {
     res.send('API SUCCESS')
 })
+// app.get('/todos', (req, res) => {
+//     res.send(todos)
+// })
 
 //controllers
-const AuthController = require('./controllers/authController')
-const RoomController = require('./controllers/roomController')
-const CustomerController = require('./controllers/customerController')
-const OrderController = require('./controllers/orderController')
+const AuthController = require('./controllers/auth')
+const GenresController = require('./controllers/genres')
+const ComicsController = require('./controllers/comics')
+const ListEpisodesController = require('./controllers/listepisodes')
+const DetailEpisodesController = require('./controllers/detailepisodes')
+const MyFavoritesController = require('./controllers/myfavorites')
+const MyWebtoonsController = require('./controllers/mywebtoon')
+const UserController = require('./controllers/users')
 
 //middleware
 const { authenticated } = require('./middleware')
 
-app.group('/api/v2', (router) => {
+app.group('/api/v1', (router) => {
     //API login & register
     router.post('/login', AuthController.login) //for Log In
-    router.post('/register', AuthController.register) //for Register
-    router.get('/user/:id', authenticated, AuthController.getUser) //for Show Detail User
-    router.patch('/user/:id', authenticated, upload.single('userImg'), AuthController.editUser) //for Show Detail User
+    router.post('/register', AuthController.register) //for Sign Up
+
+    //API genre
+    router.get('/genres', GenresController.index)
+    router.post('/genre', GenresController.store)
+    router.get('/genre/:id', GenresController.show)
+    router.patch('/genre/:id', GenresController.update)
+    router.delete('/genre/:id', GenresController.delete)
+    router.get('/genre/:id/comics', GenresController.showComics)
+
+    //API comics
+    //SELAIN SEARCH JUGA MENAMPILKAN SEMUA DATA KOMIK
+    router.get('/comics', ComicsController.index)
+
+    //API List Episode
+    router.get('/comic/:id/episodes', ListEpisodesController.showWebtoon)
+
+    //API Detail Episodes
+    router.get('/comic/:id_comic/episode/:id_episode/images', DetailEpisodesController.showDetailEpisodes)
+
+    //API MY WEBTOON CREATION
+
+    //MENAMPILKAN KOMIK MILIK/BUATAN KITA SAJA
+    router.get('/user/:id/comics', authenticated, MyWebtoonsController.showMyWebtoon)
+    //MEMBUAT KOMIK MILIK SENDIRI
+    router.post('/user/:id/comic', authenticated, MyWebtoonsController.storeMyWebtoon)
+    //UPDATE KOMIK MILIK SENDIRI
+    router.patch('/user/:id_user/comic/:id_comic', authenticated, MyWebtoonsController.updateMyWebtoon)
+    //DELETE KOMIK MILIK SENDIRI
+    router.delete('/user/:id_user/comic/:id_comic', authenticated, MyWebtoonsController.deleteMyWebtoon)
+
+    //API EPISODES MY WEBTOON CREATION
+
+    // GET SEMUA DETAIL KOMIK DARI KOMIK KITA SENDIRI
+    router.get('/user/:id_user/comic/:id_comic/episodes', authenticated, MyWebtoonsController.showDetailMyWebtoon)
+    //MEMBUAT EPISODES DARI KOMIK KITA SENDIRI
+    router.post('/user/:id_user/comic/:id_comic/episode', authenticated, MyWebtoonsController.storeMyEpisode)
+    //UPDATE DETAIL EPISODE KOMIK SENDIRI
+    router.patch('/user/:id_user/comic/:id_comic/episode/:id_episode', authenticated, MyWebtoonsController.updateMyEpisode)
+    //DELTE EPISODE KOMIK SENDIRI
+    router.delete('/user/:id_user/comic/:id_comic/episode/:id_episode', authenticated, MyWebtoonsController.deleteMyEpisode)
+
+    //API DETAIL EPISODE / IMAGE KOMIK KITA SENDIRI
+
+    //GET SEMUA DETAIL EPISODE KOMIK KITA SENDIRI
+    router.get('/user/:id_user/comic/:id_comic/episode/:id_episode/images', authenticated, MyWebtoonsController.showDetailEpisodes)
+    //MEMBUAT DETAIL EPISODE KITA SENDIRI
+    router.post('/user/:id_user/comic/:id_comic/episode/:id_episode/image', authenticated, MyWebtoonsController.storeDetailMyWebtoon)
+    //DELETE DETAIL EPISODE KITA
+    router.delete('/user/:id_user/comic/:id_comic/episode/:id_episode/image/:id_image', authenticated, MyWebtoonsController.deleteDetailMyWebtoon)
+
+    //API My Favorite
+    // router.get('/favorite/:id', MyFavoritesController.getMyFavorite)
+    router.get('/favorite/user/:id', authenticated, MyFavoritesController.getMyFavorite)
+    router.post('/favorite/user/:id_user/comic/:id_comic', authenticated, MyFavoritesController.storeMyFavorite)
 
 
-    //API Room
-    router.get('/rooms', authenticated, RoomController.index) //untuk mendapatkan semua room
-    router.post('/room', authenticated, upload.single('imageRoom'), RoomController.store) //untuk membuat room baru
-    router.patch('/room/:id', authenticated, upload.single('imageRoom'), RoomController.update) //untuk merubah room
-    router.delete('/room/:id', authenticated, RoomController.delete) //untuk delete room
-
-    //API Customer
-    router.get('/customers', authenticated, CustomerController.index) //untuk mendapatkan semua customer
-    router.post('/customer', authenticated, upload.single('image'), CustomerController.store) //untuk membuat customer baru
-    router.patch('/customer/:id', authenticated, upload.single('image'), CustomerController.update) //untuk merubah semua customer
-
-    //API Order
-    router.get('/checkin', authenticated, RoomController.checkin) //untuk mendapatkan semua order
-    router.post('/orders', authenticated, OrderController.store) //untuk membuat order baru
-    router.delete('/order', authenticated, OrderController.update) //untuk checkout order
-
-
+    //user API
+    router.get('/user/:id', authenticated, UserController.show)
+    // router.get('/users', UserController.index)
+    // router.post('/user', UserController.store)
+    // router.patch('/user/:id', UserController.update)
+    // router.delete('/user/:id', UserController.delete)
 })
 
 app.listen(port, () => console.log(`Listening On Port ${port}!`))

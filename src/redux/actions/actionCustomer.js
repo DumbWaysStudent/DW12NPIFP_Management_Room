@@ -18,9 +18,7 @@ export const handleAddCustomer = (data, token) => {
             url: `${API_SERV}/api/v2/customer`,
             data: data,
             headers: {
-                "Authorization": `Bearer ${token}`,
-                "Accept": 'application/json',
-                "Content-Type": 'multipart/form-data'
+                "Authorization": `Bearer ${token}`
             }
         })
     });
@@ -35,9 +33,7 @@ export const handleEditCustomer = (id, data, token) => {
             url: `${API_SERV}/api/v2/customer/${id}`,
             data: data,
             headers: {
-                "Authorization": `Bearer ${token}`,
-                "Accept": 'application/json',
-                "Content-Type": 'multipart/form-data'
+                "Authorization": `Bearer ${token}`
             }
         })
     });

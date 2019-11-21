@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, StatusBar, Image, AsyncStorage, ImageBackground, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, Image, ImageBackground, Dimensions } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { Item, Input, Button, Icon } from 'native-base';
 
 import { API_SERV } from '../assets/server'

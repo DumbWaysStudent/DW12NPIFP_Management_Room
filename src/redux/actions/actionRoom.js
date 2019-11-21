@@ -18,9 +18,7 @@ export const handleAddRoom = (data, token) => {
             url: `${API_SERV}/api/v2/room`,
             data: data,
             headers: {
-                "Authorization": `Bearer ${token}`,
-                "Accept": 'application/json',
-                "Content-Type": 'multipart/form-data'
+                "Authorization": `Bearer ${token}`
             }
         })
     });
@@ -36,9 +34,7 @@ export const handleEditRoom = (id, data, token) => {
             url: `${API_SERV}/api/v2/room/${id}`,
             data: data,
             headers: {
-                "Authorization": `Bearer ${token}`,
-                "Accept": 'application/json',
-                "Content-Type": 'multipart/form-data'
+                "Authorization": `Bearer ${token}`
             }
         })
     })
