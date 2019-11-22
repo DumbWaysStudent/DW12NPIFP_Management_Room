@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
-import { View, Text, AsyncStorage, StyleSheet, StatusBar, Dimensions, Image } from 'react-native';
-import { Button, Icon, Thumbnail, Item, Input } from "native-base";
+import { View, Text, StyleSheet, StatusBar, Dimensions, Image } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+import { Button, Icon, Thumbnail, Item, Input, Spinner } from "native-base";
 
 import Modal, { ModalContent, ModalTitle, ModalButton, ModalFooter } from 'react-native-modals';
 import ImagePicker from 'react-native-image-picker';
+
+import firebase from 'firebase';
+import moment from 'moment';
 
 import { API_SERV } from '../assets/server'
 import jwt_decode from 'jwt-decode';
@@ -12,6 +16,21 @@ import { connect } from 'react-redux'
 import * as actionAuth from './../redux/actions/actionAuth'
 
 import HeaderComponent from '../assets/component/HeaderComponent'
+
+var firebaseConfig = {
+    apiKey: "AIzaSyBo-LYwIHHfoELqUJqLOvZJ9B3gjmLbsrk",
+    authDomain: "isleep-1694d.firebaseapp.com",
+    databaseURL: "https://isleep-1694d.firebaseio.com",
+    projectId: "isleep-1694d",
+    storageBucket: "isleep-1694d.appspot.com",
+    messagingSenderId: "994092262246",
+    appId: "1:994092262246:web:c48e90628d786a34d29ea7",
+    measurementId: "G-7NKFBGVLB9"
+};
+// Initialize Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 
 class setting extends Component {
     constructor(props) {
@@ -23,6 +42,7 @@ class setting extends Component {
             imageSource: '',
             EditProfileVisible: false,
             icon: 'eye',
+            isLoading: false,
         };
     }
 
@@ -55,18 +75,53 @@ class setting extends Component {
             } else if (response.customButton) {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
-                let source = {
-                    uri: response.uri,
-                    type: response.type,
-                    name: response.fileName,
-                    data: response.data
-                };
+                // let source = {
+                //     uri: response.uri,
+                //     type: response.type,
+                //     name: response.fileName,
+                //     data: response.data
+                // };
+                let source = response.uri
                 console.log('ini adalah source', source)
                 this.setState({
                     imageSource: source,
+                    isLoading: true
                 });
+                this.uploadImageAsync(source);
             }
         });
+    }
+
+    async uploadImageAsync(uri) {
+        // Why are we using XMLHttpRequest? See:
+        // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+                console.log(e);
+                reject(new TypeError('Network request failed'));
+            };
+            xhr.responseType = 'blob';
+            xhr.open('GET', uri, true);
+            xhr.send(null);
+        });
+        const ref = firebase
+            .storage()
+            .ref()
+            .child(moment().toISOString());
+        const snapshot = await ref.put(blob);
+        // We're done with the blob, close and release it
+        blob.close();
+        console.log('link', await snapshot.ref.getDownloadURL());
+        this.setState({
+            imageSource: await snapshot.ref.getDownloadURL(),
+            isLoading: false
+        });
+        console.log(this.state.imageSource);
+        return await snapshot.ref.getDownloadURL();
     }
 
     _handleShowEdit() {
@@ -105,10 +160,15 @@ class setting extends Component {
         const idUser = await id.userId
 
         const { username, password, imageSource } = this.state
-        data = new FormData
-        data.append('username', username)
-        data.append('password', password)
-        data.append('userImg', imageSource)
+        // data = new FormData
+        // data.append('username', username)
+        // data.append('password', password)
+        // data.append('userImg', imageSource)
+        data ={
+            username,
+            password,
+            userImg: imageSource
+        }
 
         await this.props.handleEditUser(idUser, data, token);
         await this.props.handleGetUser(idUser, token)
@@ -130,7 +190,7 @@ class setting extends Component {
                     <View style={styles.cardItem}>
                         <View style={styles.imgStyle}>
                             {
-                                dataUser.userImg ? <Thumbnail source={{ uri: `${API_SERV}/static/` + dataUser.userImg }} style={{ width: 250, height: 250, borderRadius: 10, resizeMode: 'contain', alignSelf: 'center', justifyContent: 'center' }} /> : <Icon name="contact" style={{ color: 'white', fontSize: 250 }} />
+                                dataUser.userImg ? <Thumbnail source={{ uri: dataUser.userImg }} style={{ width: 250, height: 250, borderRadius: 10, resizeMode: 'contain', alignSelf: 'center', justifyContent: 'center' }} /> : <Icon name="contact" style={{ color: 'white', fontSize: 250 }} />
                             }
                         </View>
                         <View style={styles.cardItemDetail}>
@@ -181,7 +241,7 @@ class setting extends Component {
                             <Icon style={styles.iconStyle} active name={this.state.icon} onPress={() => this._changeIcon()} />
                         </Item>
                         {
-                            this.state.imageSource ? <Image source={this.state.imageSource} style={{ width: '80%', height: 200, resizeMode: 'contain', alignSelf: 'center' }} /> : <Text>Photo</Text>
+                            this.state.isLoading == true ? <Spinner color='#34afa9' /> : this.state.imageSource ? <Image source={{ uri: this.state.imageSource }} style={{ width: '80%', height: 200, resizeMode: 'contain', alignSelf: 'center' }} /> : <Text style={{ alignSelf: 'center' }}>Foto Profile</Text>
                         }
                         <Icon style={{ alignSelf: 'center' }} onPress={this.selectPhoto.bind(this)} type='Ionicons' name='camera' />
                     </ModalContent>

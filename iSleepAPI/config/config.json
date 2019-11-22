@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": null,
-    "database": "dbrealtoon",
+    "database": "db_isleep",
     "host": "localhost",
     "dialect": "mysql",
     "operatorsAliases": false
@@ -10,8 +10,8 @@
   "test": {
     "username": "root",
     "password": null,
-    "database": "dbrealtoon",
-    "host": "localhost",
+    "database": "database_test",
+    "host": "127.0.0.1",
     "dialect": "mysql",
     "operatorsAliases": false
   },

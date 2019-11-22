@@ -28,8 +28,6 @@ export const handleEditUser = (id, data, token) => {
             data: data,
             headers: {
                 "Authorization": `Bearer ${token}`,
-                "Accept": 'application/json',
-                "Content-Type": 'multipart/form-data'
             }
         })
     });
